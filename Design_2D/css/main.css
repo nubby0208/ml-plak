@@ -1,0 +1,178 @@
+body {
+    padding:10px;
+    overflow: scroll;
+    display: flex;
+    flex-direction: row;
+}
+canvas {
+    width: 100%;
+    border:1px solid #b4b497;
+}
+html,
+body {
+    margin: 0;
+    overflow: hidden;
+    height: 100%;
+}
+
+/* Scale canvas with resize attribute to full size */
+a{
+    text-decoration:none;
+}
+.title{
+    width: 100%;
+    text-align: center;
+}
+.center-container{
+    display: flex;
+    flex-flow: wrap;
+    width: 100%;
+    height: 75%;
+    justify-content: space-between;
+}
+#naming-box{
+    display: flex;
+    width: 100%;
+    align-self: center;
+    align-items: center;
+    align-content: center;
+    flex-direction: column;
+}
+.naming-items{
+    display: flex;
+    flex-direction: column;
+    margin-bottom: 1%;
+}
+.canvas-container {
+    width: 90%;
+    max-height: 90%;
+}
+#Lineas{
+    display: flex;
+    flex-direction: row;
+    width: 100%;
+}
+canvas {
+    width: 100%;
+    height: 100%;
+}
+.buttons-container {
+    display: flex;
+    width: 10%;
+    flex-flow: column;
+}
+
+.buttons-container div{
+    width: 100%;
+}
+.buttons {
+    width: 100%;
+}
+.Dibujos{
+    background-color: #286090;
+    border-color: #204d74;
+    color: #ffffff;
+    text-align: center;
+}
+p{
+    margin-bottom: 0em;
+}
+#Borrar_Linea{
+    margin-bottom: 5%;  
+}
+.results-container{
+    display: flex;
+    flex-direction: column;
+    margin-bottom: 2.5%;
+}
+.color-selector{
+    display: flex;
+    align-content: center;
+}
+#color_change{
+    width :  50%;
+    height: 100%;
+}
+#favcolor{
+    height: 100%;
+    width: 50%;
+}
+.width-line{
+    width: 50%;
+}
+.width-line-cont{
+    display: flex;
+    flex-direction: row;
+}
+.w-input {
+    text-align: center;
+}
+.edit_erase{
+    display: flex;
+    flex-direction: row;
+}
+.edit_erase button{
+    width: 50%;
+}
+.group-name{
+    border: none;
+    padding: 2%;
+}
+.group-name-container{
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+}
+.color-container{
+    display: flex;
+    flex-direction: row;
+    justify-content: space-around;
+    width: 30%;
+}
+.group-caracts{
+        display: flex;
+        flex-direction: row;
+}
+#linea{
+    width: 8%;
+}
+.line-changes-table-item{
+ width: 50%;
+}
+.line-number{
+    width: 100%;
+}
+#Design{
+    display: none;
+}
+
+.modal{
+    display: flex;
+}
+.close_cont{
+    display: flex;
+    justify-content: center;
+}
+.menu_modal{
+    display: none;
+    position: absolute;
+    width: 10%;
+    height: 5%;
+    z-index: 1;
+}
+.close_line_menu{
+    align-self: center;
+}
+#CopyDistance{
+    height: 100%;
+    width: 100%;
+}
+.extraOptions{
+    display: none;
+}
+.MovementOptions{
+    display: none;
+}
+.MovementOptions >button{
+    font-weight: bold;
+}

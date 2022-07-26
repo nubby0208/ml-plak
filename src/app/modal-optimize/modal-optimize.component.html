@@ -1,0 +1,113 @@
+ <!-- Modal Para crear la Optimizacion 
+    <div class="modal fade" id="modal_optimizacion" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+      <div class="modal-dialog" role="document" style="width: 80% !important;">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title" id="exampleModalLabel">PARAMETROS OPTIMIZACION</h5>
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+              <span aria-hidden="true">&times;</span>
+            </button>
+          </div>
+          
+          <div class="modal-body">
+            
+            <div class="row">
+              <div class="col-xs-3">
+                  <span><strong>Nombre</strong></span>
+              </div>
+
+              <div class="col-xs-2">
+                  <span><strong>Largo[mm]</strong></span>
+              </div>
+              <div class="col-xs-2">
+                  <span><strong>Ancho[mm]</strong></span>
+              </div>
+
+              <div class="col-xs-2">
+                  <span><strong>Cantidad</strong></span>
+              </div>
+
+            </div>
+
+            <hr>
+            
+            <form class="form-horizontal">
+            <div class="row" id="parametros_material_optimizar">
+
+                <div class="col-xs-3">
+                   <span id='material_optimizar'></span>
+                </div>
+
+                <div class="col-xs-2">
+                   <input style="width: 80px;" type="text" name="largo" class="input-sm largo" autocomplete="off">
+                </div>
+
+                <div name="" class="col-xs-2">
+                   <input style="width: 80px;" type="text" name="ancho" class="input-sm ancho" autocomplete="off">
+                </div>
+
+                <div name="" class="col-xs-2">
+                   <input style="width: 80px;" type="text" name="cantidad" class="input-sm cantidad" autocomplete="off">
+                </div>
+
+                
+            </div>
+            
+            <div id="paneles_adicionales"></div>
+            <div class="col-xs-10 col-lg-10 col-ms-10" style="text-align: right;">
+                  <button  title="Agregar Corte" (click)="addRenglon()" class="btn btn-success btn-sm" type="button">add</button>
+                </div>
+
+            <div class="row" style="text-align: right;">
+              <hr>
+
+              <div class="form-group">
+                <label for="nombre_proyecto" class="col-form-label col-sm-2 col-md-offset-2">Nombre Proyecto:</label>
+                <div class="col-sm-6">
+                  <input type="text" value="" class="form-control" name="nombre_proyecto" id="nombre_proyecto" >
+                   <span class="help-block">Cliente / Proyecto </span>
+                </div>
+              </div>  
+
+              <div class=" form-group">
+                <label for="saw_kert" class="col-form-label col-sm-2 col-md-offset-2">Saw Kert:</label>
+                <div class="col-sm-6">
+                  <input type="text" value="" class="form-control" name="saw_kert" id="saw_kert" >
+                  <span class="help-block"> Corte de la sierra[mm]</span>
+                </div>
+              </div>
+
+              <div class=" form-group">
+                <label for="trim" class="col-form-label col-sm-2 col-md-offset-2">Trim:</label>
+                <div class="col-sm-6">
+                  <input type="text" value="" class="form-control" name="trim" id="trim" >
+                  <span class="help-block">..</span>
+                </div>
+              </div>
+          
+              
+            </div>
+            </form>
+            <div class="text-center">
+                <p *ngIf="inProgress"><b>Optimizando. Por favor espere unos segundos...</b></p>
+                <div *ngIf="optimizado">
+                        <button type="button" (click)="VerOptimizacion()" class="btn btn-primary">
+                        Ver Optimizacion
+                        </button>
+                        <button type="button" (click)="download_pdf()" class="btn btn-primary">
+                        <span _ngcontent-c0="" class="glyphicon glyphicon-cog" style="font-size: 1.6em"></span>
+                        Ver Optimizacion
+                        </button>
+                </div>
+              </div>
+              
+
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancelar</button>
+            <button type="button" (click)="enviarOptimizacion()"  class="btn btn-primary">Optimizar</button>
+          </div>
+          <app-pdf-viewer></app-pdf-viewer>
+        </div>
+      </div>
+    </div> -->

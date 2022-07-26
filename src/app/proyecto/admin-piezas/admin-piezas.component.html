@@ -1,0 +1,138 @@
+<div style="text-align: right; margin-right: 25px;">
+	<button title="Agregar Pieza" class="btn btn-xxl btn-success" (click)="new()"><span class="glyphicon glyphicon-plus"></span></button>
+</div>
+	
+<div *ngIf="!show_form">
+	<table class="table">
+		<thead>
+			<tr>
+				<th>#</th>
+				<th>Estado</th>
+				<th>Cantidad</th>
+				<th>Pieza</th>
+				<th>Comentario</th>
+				<th>LVeta</th>
+				<th>AVeta</th>
+				<th>Módulo</th>
+				<th>Material</th>
+				<th>Espesor</th>
+				<th>Acciones</th>
+			</tr>
+		</thead>
+		<tbody>
+				<tr *ngFor="let pieza of piezas; let id = index;">
+					<td>{{ id + 1 }}</td>
+					<td>{{ pieza.estado.estado }}</td>
+					<td>{{ pieza.cantidad }}</td>
+					<td>{{ pieza.pieza }}</td>
+					<td>{{ pieza.comentario }}</td>
+					<td>{{ pieza.lveta }}</td>
+					<td>{{ pieza.aveta }}</td>
+					<td>Modulo {{ pieza.modulo.modulo }}</td>
+					<td>{{ pieza.material.material }}</td>
+					<td>{{ pieza.espesor }}</td>
+					<td>
+						<button title="Editar Pieza" class="btn btn-xs btn-warning" (click)="edit(id)"><span class="glyphicon glyphicon-pencil"></span></button>
+						<button title="Eliminar Pieza" class="btn btn-xs btn-danger" (click)="delete(id)"><span class="glyphicon glyphicon-trash"></span></button>
+					</td>
+				</tr>
+		</tbody>
+	</table>
+</div>
+
+<div *ngIf="show_form">
+  <div class="panel panel-default">
+  <div class="panel-heading">Formulario Piezas</div>
+  <div class="panel-body">
+		<div class="form-group">
+	    <label for="pieza" class="col-lg-2 control-label">Pieza:</label>
+	    <div class="col-lg-10">
+		    <input type="text" id="pieza" class="form-control" [(ngModel)]="newPieza.pieza"  placeholder="Ingrese la Pieza">
+	    </div>
+    </div> 
+
+    <div class="form-group">
+	    <label for="cantidad" class="col-lg-2 control-label">Cantidad:</label>
+	    <div class="col-lg-10">
+		    <input type="number" id="cantidad" class="form-control" [(ngModel)]="newPieza.cantidad"  placeholder="Ingrese la Cantidad">
+	    </div>
+    </div> 
+
+    <div class="form-group">
+	    <label for="posicion_x" class="col-lg-2 control-label">Posicion X:</label>
+	    <div class="col-lg-10">
+		    <input type="text" id="posicion_x" class="form-control" [(ngModel)]="newPieza.posicion_x"  placeholder="Ingrese la Posicion X">
+	    </div>
+    </div> 
+
+    <div class="form-group">
+	    <label for="posicion_y" class="col-lg-2 control-label">Posicion Y:</label>
+	    <div class="col-lg-10">
+		    <input type="text" id="posicion_y" class="form-control" [(ngModel)]="newPieza.posicion_y"  placeholder="Ingrese la Posicion Y">
+	    </div>
+    </div> 
+
+    <div class="form-group">
+	    <label for="posicion_z" class="col-lg-2 control-label">Posicion Z:</label>
+	    <div class="col-lg-10">
+		    <input type="text" id="posicion_z" class="form-control" [(ngModel)]="newPieza.posicion_z"  placeholder="Ingrese la Posicion Z">
+	    </div>
+    </div> 
+
+    <div class="form-group">
+	    <label for="lvata" class="col-lg-2 control-label">Lveta:</label>
+	    <div class="col-lg-10">
+		    <input type="text" id="lvata" class="form-control" [(ngModel)]="newPieza.lveta"  placeholder="Ingrese el Lveta">
+	    </div>
+    </div>
+
+    <div class="form-group">
+	    <label for="lvata" class="col-lg-2 control-label">Aveta:</label>
+	    <div class="col-lg-10">
+		    <input type="text" id="avata" class="form-control" [(ngModel)]="newPieza.aveta"  placeholder="Ingrese el Aveta">
+	    </div>
+    </div>
+
+    <div class="form-group">
+	    <label for="espesor" class="col-lg-2 control-label">Espesor:</label>
+	    <div class="col-lg-10">
+		    <input type="text" id="espesor" class="form-control" [(ngModel)]="newPieza.espesor"  placeholder="Ingrese el Espesor">
+	    </div>
+    </div>
+
+    <div class="form-group">
+	    <label for="orientacion" class="col-lg-2 control-label">Orientacion:</label>
+	    <div class="col-lg-10">
+		    <input type="text" id="orientacion" class="form-control" [(ngModel)]="newPieza.orientacion"  placeholder="Seleccione el Modulo">
+	    </div>
+    </div>
+
+    <div class="form-group">
+	    <label for="modulo_id" class="col-lg-2 control-label">Modulo:</label>
+	    <div class="col-lg-10">
+	    	<select id="modulo_id" [(ngModel)]="newPieza.modulo_id" class="form-control">
+		   	  <option *ngFor="let modulo of modulos" [value]="modulo.id">Modulo {{ modulo.modulo }}</option>
+		   </select> 
+	    </div>
+    </div>
+
+    <div class="form-group">
+	    <label for="material_id" class="col-lg-2 control-label">Material:</label>
+	    <div class="col-lg-10">
+			  <select id="materiales" [(ngModel)]="newPieza.material_id" class="form-control">
+			   	<option *ngFor="let material of materiales" [value]="material.id">{{ material.material }}</option>
+			   </select> 
+	    </div>
+    </div>
+
+    <div class="form-group">
+	    <label for="estado_id" class="col-lg-2 control-label">Estado:</label>
+	    <div class="col-lg-10">
+	    	<select id="estado_id" [(ngModel)]="newPieza.estado_id" class="form-control">
+		   	  <option *ngFor="let estado of estados" [value]="estado.id">{{ estado.estado }}</option>
+		   </select> 
+	    </div>
+    </div>
+
+  </div>
+</div>

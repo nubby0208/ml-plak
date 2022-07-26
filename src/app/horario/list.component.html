@@ -1,0 +1,247 @@
+<div id="app-usuario-horario-list" class="container-fluid">
+	<div class="col-sm-10 col-sm-offset-1">
+		<div class="col-sm-12 text-center">
+			<h2>
+				Listado de horarios por usuario
+			</h2>
+			<button type="button" class="btn btn-xs btn-success" (click)="editDefault()">
+				<span class="glyphicon glyphicon-pencil"></span>
+				Editar horario default
+			</button>
+			<hr>
+		</div>
+
+		<div id="usuario-listado" class="col-sm-12">
+			<table class="table table-hover">
+				<thead>
+					<th>#</th>
+					<th>Usuario</th>
+					<th>Nombre completo</th>
+					<th class="text-center">L</th>
+					<th class="text-center">M</th>
+					<th class="text-center">X</th>
+					<th class="text-center">J</th>
+					<th class="text-center">V</th>
+					<th class="text-center">S</th>
+					<th>Default</th>
+					<th>Acciones</th>
+				</thead>
+				<tbody>
+					<ng-container *ngIf="usuarios; else emptyUsuarios">
+						<tr *ngFor="let usuario of usuarios; let i = index">
+							<td>{{ i+1 }}</td>
+							<td >{{ usuario.usuario }}</td>
+							<td class="text-capitalize">{{ usuario.nombre_completo }}</td>
+							<td class="text-center">
+								<span *ngIf="usuario.horario && usuario.horario.habilitado_lunes">
+									{{usuario.horario.hora_inicio_lunes}} <br>
+									{{usuario.horario.hora_fin_lunes}}
+								</span>
+								<span *ngIf="horarioDefault && horarioDefault.habilitado_lunes && !usuario.horario">
+									{{horarioDefault.hora_inicio_lunes}} <br>
+									{{horarioDefault.hora_fin_lunes}}
+								</span>
+								<span *ngIf="(usuario.horario && !usuario.horario.habilitado_lunes) || (horarioDefault && !horarioDefault.habilitado_lunes && !usuario.horario)"> - </span>
+							</td>
+							<td class="text-center">
+								<span *ngIf="usuario.horario && usuario.horario.habilitado_martes">
+									{{usuario.horario.hora_inicio_martes}} <br>
+									{{usuario.horario.hora_fin_martes}}
+								</span>
+								<span *ngIf="horarioDefault && horarioDefault.habilitado_martes && !usuario.horario">
+									{{horarioDefault.hora_inicio_martes}} <br>
+									{{horarioDefault.hora_fin_martes}}
+								</span>
+								<span *ngIf="(usuario.horario && !usuario.horario.habilitado_martes) || (horarioDefault && !horarioDefault.habilitado_martes && !usuario.horario)"> - </span>
+							</td>
+							<td class="text-center">
+								<span *ngIf="usuario.horario && usuario.horario.habilitado_miercoles">
+									{{usuario.horario.hora_inicio_miercoles}} <br>
+									{{usuario.horario.hora_fin_miercoles}}
+								</span>
+								<span *ngIf="horarioDefault && horarioDefault.habilitado_miercoles && !usuario.horario">
+									{{horarioDefault.hora_inicio_miercoles}} <br>
+									{{horarioDefault.hora_fin_miercoles}}
+								</span>
+								<span *ngIf="(usuario.horario && !usuario.horario.habilitado_miercoles) || (horarioDefault && !horarioDefault.habilitado_miercoles && !usuario.horario)"> - </span>
+							</td>
+							<td class="text-center">
+								<span *ngIf="usuario.horario && usuario.horario.habilitado_jueves">
+									{{usuario.horario.hora_inicio_jueves}} <br>
+									{{usuario.horario.hora_fin_jueves}}
+								</span>
+								<span *ngIf="horarioDefault && horarioDefault.habilitado_jueves && !usuario.horario">
+									{{horarioDefault.hora_inicio_jueves}} <br>
+									{{horarioDefault.hora_fin_jueves}}
+								</span>
+								<span *ngIf="(usuario.horario && !usuario.horario.habilitado_jueves) || (horarioDefault && !horarioDefault.habilitado_jueves && !usuario.horario)"> - </span>
+							</td>
+							<td class="text-center">
+								<span *ngIf="usuario.horario && usuario.horario.habilitado_viernes">
+									{{usuario.horario.hora_inicio_viernes}} <br>
+									{{usuario.horario.hora_fin_viernes}}
+								</span>
+								<span *ngIf="horarioDefault && horarioDefault.habilitado_viernes && !usuario.horario">
+									{{horarioDefault.hora_inicio_viernes}} <br>
+									{{horarioDefault.hora_fin_viernes}}
+								</span>
+								<span *ngIf="(usuario.horario && !usuario.horario.habilitado_viernes) || (horarioDefault && !horarioDefault.habilitado_viernes && !usuario.horario)"> - </span>
+							</td>
+							<td class="text-center">
+								<span *ngIf="usuario.horario && usuario.horario.habilitado_sabado">
+									{{usuario.horario.hora_inicio_sabado}} <br>
+									{{usuario.horario.hora_fin_sabado}}
+								</span>
+								<span *ngIf="horarioDefault && horarioDefault.habilitado_sabado && !usuario.horario">
+									{{horarioDefault.hora_inicio_sabado}} <br>
+									{{horarioDefault.hora_fin_sabado}}
+								</span>
+								<span *ngIf="(usuario.horario && !usuario.horario.habilitado_sabado) || (horarioDefault && !horarioDefault.habilitado_sabado && !usuario.horario)"> - </span>
+							</td>
+							
+							<td><span class="glyphicon glyphicon-record text-{{ ((usuario.horario && !usuario.horario.is_default)) ? 'danger' : 'success'}}" data-toggle="tooltip" title="{{ ((usuario.horario && !usuario.horario.is_default)) ? 'Inactivo' : 'Activo' }}"></span></td>
+							<td>
+								<button class="btn btn-xs btn-warning" (click)="edit(i)"><span class="glyphicon glyphicon-pencil"></span></button>
+								<button class="btn btn-xs btn-danger" (click)="delete(1)"><span class="glyphicon glyphicon-trash"></span></button>
+							</td>
+						</tr>
+					</ng-container>
+
+					<ng-template #emptyUsuarios>
+						<tr>
+							<td class="text-center" colspan="6"><strong>No posee usuarios registrados</strong></td>
+						</tr>
+					</ng-template>
+				</tbody>
+			</table>
+		</div>
+
+		<div id="modal-feriado" class="modal fade" tabindex="-1">
+			<div class="modal-dialog">
+				<div class="modal-content">
+					<div class="modal-header">
+						<button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+						<h4 class="modal-title">Feriados</h4>
+					</div>
+					<div class="modal-body">
+						<app-feriado-form [(inputFeriados)]="feriados"></app-feriado-form>
+					</div>
+					<div class="modal-footer">
+						<button type="button" class="btn btn-success" (click)="feriadoComponent.save()">Guardar</button>
+						<button type="button" class="btn btn-default" data-dismiss="modal">Cerrar</button>
+					</div>
+				</div>
+			</div>
+		</div>
+
+		<div id="modal-horario" class="modal fade" tabindex="-1">
+			<div class="modal-dialog">
+				<div class="modal-content">
+					<div class="modal-header">
+						<button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+						<h4 class="modal-title">Usuario</h4>
+					</div>
+					<div class="modal-body">
+						<app-usuario-horario-form></app-usuario-horario-form>
+					</div>
+					<div class="modal-footer">
+						<button type="button" class="btn btn-success" (click)="horarioFormComponent.save()">Guardar</button>
+						<button type="button" class="btn btn-default" data-dismiss="modal">Cerrar</button>
+					</div>
+				</div>
+			</div>
+		</div>
+
+		<div id="modal-horario-default" class="modal fade" tabindex="-1">
+			<div class="modal-dialog">
+				<div class="modal-content">
+					<div class="modal-header">
+						<button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+						<h4 class="modal-title">Horario default</h4>
+					</div>
+					<div class="modal-body">
+						<app-horario-default-form [(inputHorario)]="horarioDefault" ></app-horario-default-form>
+					</div>
+					<div class="modal-footer">
+						<button type="button" class="btn btn-success" (click)="horarioDefaultFormComponent.save()">Guardar</button>
+						<button type="button" class="btn btn-default" data-dismiss="modal">Cerrar</button>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+	<div class="col-sm-10 col-sm-offset-1">
+		<div class="col-sm-12 text-center">
+			<h2>
+				Listado de Feriados
+			</h2>
+			<button type="button" class="btn btn-xs btn-success" (click)="newFeriado()">
+				<span class="glyphicon glyphicon-pencil"></span>
+				Nuevo feriado
+			</button>
+			<hr>
+		</div>
+
+		<div id="usuario-listado" class="col-sm-12">
+			<table class="table table-hover">
+				<thead>
+					<th>#</th>
+					<th>Fecha</th>
+				</thead>
+				<tbody>
+					<ng-container *ngIf="feriados; else emptyFeriados">
+						<tr *ngFor="let feriado of feriados; let i = index">
+							<td>{{ i+1 }}</td>
+							<td >{{ feriado.fecha }}</td>
+							<td>
+								<button class="btn btn-xs btn-danger" (click)="deleteFeriado(i)"><span class="glyphicon glyphicon-trash"></span></button>
+							</td>
+						</tr>
+					</ng-container>
+
+					<ng-template #emptyFeriados>
+						<tr>
+							<td class="text-center" colspan="6"><strong>No posee feriados registrados</strong></td>
+						</tr>
+					</ng-template>
+				</tbody>
+			</table>
+		</div>
+
+		<div id="modal-horario" class="modal fade" tabindex="-1">
+			<div class="modal-dialog">
+				<div class="modal-content">
+					<div class="modal-header">
+						<button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+						<h4 class="modal-title">Usuario</h4>
+					</div>
+					<div class="modal-body">
+						<app-usuario-horario-form></app-usuario-horario-form>
+					</div>
+					<div class="modal-footer">
+						<button type="button" class="btn btn-success" (click)="horarioFormComponent.save()">Guardar</button>
+						<button type="button" class="btn btn-default" data-dismiss="modal">Cerrar</button>
+					</div>
+				</div>
+			</div>
+		</div>
+
+		<div id="modal-horario-default" class="modal fade" tabindex="-1">
+			<div class="modal-dialog">
+				<div class="modal-content">
+					<div class="modal-header">
+						<button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+						<h4 class="modal-title">Horario default</h4>
+					</div>
+					<div class="modal-body">
+						<app-horario-default-form [(inputHorario)]="horarioDefault" ></app-horario-default-form>
+					</div>
+					<div class="modal-footer">
+						<button type="button" class="btn btn-success" (click)="horarioDefaultFormComponent.save()">Guardar</button>
+						<button type="button" class="btn btn-default" data-dismiss="modal">Cerrar</button>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>

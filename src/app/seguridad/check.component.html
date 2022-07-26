@@ -1,0 +1,24 @@
+<div id="app-seguridad-check" class="container">
+	<div class="jumbotron jumbotron-fluid container-fluid">
+		<div class="col-sm-12 text-center">
+			<h2 class="">Acceder al contenido</h2>
+
+			<small>Se realiza esta comprobación para validad el acceso al panel administrativo</small>
+		</div>
+
+		<div id="" class="col-sm-12">
+			<form id="form-check" class="form-horizontal" action="#!" method="post">
+				<div class="form-group">
+					<label class="control-label col-sm-2" for="codigo">Código</label>
+					<div class="col-sm-8">
+						<input id="codigo" class="form-control" name="codigo" type="password" [(ngModel)]="formData.codigo">
+					</div>
+				</div>
+
+				<div class="form-group text-center">
+					<button type="button" class="btn btn-success" (click)="sendCheck()">Comprobar</button>
+				</div>
+			</form>
+		</div>
+	</div>
+</div>

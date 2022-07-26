@@ -1,0 +1,127 @@
+<div id="app-auditoria-list" class="container">
+	<div class="col-sm-10 col-sm-offset-1">
+		<div class="col-sm-12 text-center">
+			<h2>
+				Listado de cambios
+			</h2>
+			<hr>
+		</div>
+
+		<div id="usuario-listado" class="col-sm-12">
+			<div class="form-horizontal">
+        <div class="row">
+          <div class="col-sm-4 form-group">
+            <label class="control-label col-sm-4">Usuario: </label>
+            <div class="col-sm-8">
+              <select class="form-control" name="usuario" [(ngModel)]="form.usuario_id">
+                <option *ngFor="let usuario of usuarios" [value]="usuario.id">{{ usuario.usuario }}</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="col-sm-6 form-group">
+            <label class="control-label col-sm-4"><span>Rango fecha</span></label>
+            <div class="col-sm-8">
+              <input type="text" class="form-control" daterangepicker name="fecha_fin"
+              (selected)="selectedDate($event, daterange)"
+              (applyDaterangepicker)="calendarApplied($event)"
+              >
+            </div>
+          </div>
+
+          <div class="col-sm-2 form-group">
+            <button class="btn btn-sm btn-success" (click)="reloadRegistros()">
+              <span class="glyphicon glyphicon-ok"></span>
+            </button>
+
+            <button class="btn btn-sm btn-default" (click)="resetForm()">
+              <span class="glyphicon glyphicon-refresh"></span>
+            </button>
+          </div>
+        </div>
+
+        <div class="row">
+          <div class="col-sm-4 form-group">
+            <label class="control-label col-sm-4"><span>Pieza: </span></label>
+            <div class="col-sm-8">
+              <input
+                class="form-control" type="text"
+                name="search" [(ngModel)]="searchTerm"
+                (ngModelChange)="searchRegistros()"
+              >
+            </div>
+          </div>
+          <!--<div class="col-sm-2">
+            <button class="btn btn-sm btn-success" (click)="searchRegistros()">
+              <span class="glyphicon glyphicon-search"></span>
+            </button>
+          </div>-->
+        </div>
+			</div>
+      <br>
+			<table class="table table-hover">
+				<thead>
+					<th>#</th>
+          <th>Usuario</th>
+          <th *ngIf="sortNewEstado==='new_estado'" (click)="setSortProps('sortNewEstado', '-new_estado')">
+            Valor <span class="glyphicon glyphicon-sort-by-alphabet"></span>
+          </th>
+          <th *ngIf="sortNewEstado==='-new_estado'" (click)="setSortProps('sortNewEstado', 'new_estado')">
+            Valor <span class="glyphicon glyphicon-sort-by-alphabet-alt"></span>
+          </th>
+          <th *ngIf="sortOldEstado==='old_estado'" (click)="setSortProps('sortOldEstado', '-old_estado')">
+            Valor anterior <span class="glyphicon glyphicon-sort-by-alphabet"></span>
+          </th>
+          <th *ngIf="sortOldEstado==='-old_estado'" (click)="setSortProps('sortOldEstado', 'old_estado')">
+            Valor anterior <span class="glyphicon glyphicon-sort-by-alphabet-alt"></span>
+          </th>
+					<th>Campo</th>
+					<th>Tipo pieza</th>
+					<th>Pieza</th>
+					<th>Tapacanto</th>
+					<th>Módulo</th>
+					<th>Proyecto</th>
+          <th *ngIf="sortCliente==='cliente'" (click)="setSortProps('sortCliente', '-cliente')">
+            Cliente <span class="glyphicon glyphicon-sort-by-alphabet"></span>
+          </th>
+          <th *ngIf="sortCliente==='-cliente'" (click)="setSortProps('sortCliente', 'cliente')">
+            Cliente <span class="glyphicon glyphicon-sort-by-alphabet-alt"></span>
+          </th>
+					<th>Fecha</th>
+				</thead>
+
+				<tbody>
+					<ng-container *ngIf="(registros.length > 0); else emptyRegistros">
+						<tr *ngFor="let registro of registros; let i = index">
+							<td>{{ i+1 }}</td>
+							<td>{{ registro.usuario }}</td>
+							<td>{{ registro.new_estado }}</td>
+              <td>{{ registro.old_estado }}</td>
+							<td>{{ registro.campo }}</td>
+							<td>{{ registro.tipo_pieza }}</td>
+							<td>{{ (registro.pieza === null) ? 'N/A' : registro.pieza }}</td>
+							<td>{{ (registro.posicion_tapacanto === null) ? 'N/A' : registro.posicion_tapacanto }}</td>
+							<td>{{ registro.modulo }}</td>
+              <td>{{ registro.proyecto }}</td>
+              <td>{{ registro.cliente }}</td>
+							<td>{{ registro.created_at }}</td>
+						</tr>
+					</ng-container>
+
+					<ng-template #emptyRegistros>
+						<tr>
+							<td class="text-center" colspan="12"><strong>No posee registro de cambios registrados</strong></td>
+						</tr>
+					</ng-template>
+				</tbody>
+				<tfoot>
+					<tr>
+						<th colspan="10"></th>
+						<th>Cantidad OK</th>
+						<th>{{ cantidadOk }}</th>
+					</tr>
+				</tfoot>
+			</table>
+		</div>
+	</div>
+</div>

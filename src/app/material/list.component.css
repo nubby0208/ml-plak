@@ -1,0 +1,35 @@
+.modal-body {
+	max-height: calc(100vh - 183px);
+  overflow-y: auto;
+}
+
+.img-responsive {
+	max-height: calc(100vh - 250px);
+	width: max-content;
+}
+
+.btn.disabled, .btn[disabled], fieldset[disabled] .btn {
+	background-color: gray;
+	border-color: gray;
+}
+
+.loading-area {
+	float: left;
+	/*position: absolute;*/
+	height: 200px;
+	width: 90%;
+	z-index: 9;
+	/*background: rgba(0,0,0,0.3);*/
+}
+
+.loading-area div {
+	position: absolute;
+	left: 50%;
+	top: 10%;
+	margin-top: 9%;
+}
+
+.loading-area div img {
+	position: relative;
+	left: -50%;
+}

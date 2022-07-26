@@ -1,0 +1,20 @@
+.create-item-form {
+    display: flex;
+    align-items: baseline;
+    font-size: 12px;
+}
+
+.create-item-form .form-group {
+    margin: 0px 10px;
+}
+
+.form-submit-container {
+    display: flex;
+    flex-direction: row-reverse;
+    padding: 5px 10px 15px 10px;
+}
+
+.form-error {
+    color: red;
+    font-size: 11px;
+}

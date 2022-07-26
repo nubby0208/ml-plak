@@ -1,0 +1,541 @@
+<div class="container-fluid">
+
+
+  <div class="col-lg-9 col-md-12 col-sm-12 col-xs-12" style="margin: 25px 0; padding: 0px;">
+
+
+    <ng-container *ngIf="!cargandoCalendario">
+      <mwl-demo-utils-calendar-header [(view)]="view" [(viewDate)]="viewDate" (viewDateChange)="fetchEvents()"
+        (viewChange)="fetchEvents()">
+      </mwl-demo-utils-calendar-header>
+
+      <div class="row" style="display: flex;">
+        <small class="col-md-2" style="font-weight: bold; display: flex;align-items: center;justify-content: center;">
+          Filtrar por grupos </small>
+        <select class="form-control" name="grupo" style="width: 300px;" (ngModelChange)="filtrarPorGrupo($event)"
+          [(ngModel)]="filtroGrupo" [disabled]="grupos.length == 0">
+          <option selected value="0"> Ver todos </option>
+          <option *ngFor="let grupo of grupos" [value]="grupo.id">{{ grupo.nombre_grupo }}</option>
+        </select>
+        <button class="btn btn-xs btn-outline-primary" (click)="fetchEvents()"
+          style="margin-left: 20px; margin-right: 5px;"><span class="fa fa-refresh"></span> Refrescar</button>
+      </div>
+      <hr />
+      <ng-template #customCellTemplate let-day="day" let-locale="locale">
+        <div class="cal-cell-top" (click)="nuevoEvento(day)">
+          <span class="cal-day-number pointer"
+            (click)="viewDate = day.date; view='day'">{{ day.date | calendarDate:'monthViewDayNumber':locale }}</span>
+        </div>
+        <ng-container *ngIf="!cargandoCalendario">
+          <ng-container *ngFor="let event of day.events">
+            <small (click)="detalleCalendario(event.meta)" class="calendario-detalle"
+              [ngStyle]="{'color': verificoProyecto(event.meta) ? 'black' : 'white'}" [class]="event.cssClass"
+              [ngClass]="{'evento' : !verificoProyecto(event.meta)}">
+              <ng-container *ngIf="verificoProyecto(event.meta); else esEvento">
+                <div class="responsive-text">
+                  {{(event.meta.cliente.nombre_completo.toUpperCase() + " - " + event.meta.proyecto.toUpperCase())}}
+                </div>
+                <span *ngIf="event.meta.finalizado" [ngClass]="event.meta.observaciones == null || event.meta.observaciones == '' ? 'text-success' : 'text-warning'" class="fa fa-check position-check"></span>
+                <span *ngIf="!event.meta.finalizado && event.meta.observaciones" class="fa fa-exclamation-circle position-check text-warning"></span>
+                <div
+                  *ngIf="!event.meta.finalizado && (event.meta.observaciones == null || event.meta.observaciones == '')">
+                  <span [ngStyle]="{'color': event.meta.bolitas[0]}" class="fa fa-circle"></span>
+                  <span [ngStyle]="{'color': event.meta.bolitas[1]}" class="fa fa-circle"></span>
+                </div>
+              </ng-container>
+              <ng-template #esEvento>
+                <div class="evento-responsive">
+                  {{(event.meta.tarea.toUpperCase() + " - " + event.meta.hora_inicio+"HS")}}
+                </div>
+                <span *ngIf="!verificoProyecto(event.meta)" [ngClass]="event.cssClass"
+                  class="fa fa-square position-bolitas"></span>
+              </ng-template>
+
+            </small>
+          </ng-container>
+        </ng-container>
+      </ng-template>
+
+      <div [ngSwitch]="view">
+        <mwl-calendar-month-view [refresh]="refresh" (beforeViewRender)="beforeMonthViewRender($event)"
+          *ngSwitchCase="'month'" [viewDate]="viewDate" [weekStartsOn]="weekStartsOn" [events]="events"
+          [cellTemplate]="customCellTemplate">
+        </mwl-calendar-month-view>
+        <mwl-calendar-week-view [refresh]="refresh" [weekStartsOn]="weekStartsOn" *ngSwitchCase="'week'"
+          [viewDate]="viewDate" [events]="events">
+        </mwl-calendar-week-view>
+        <mwl-calendar-day-view [refresh]="refresh" *ngSwitchCase="'day'" [viewDate]="viewDate" [events]="events"
+          (beforeViewRender)="updateCalendarEvents($event)">
+        </mwl-calendar-day-view>
+      </div>
+    </ng-container>
+  </div>
+  <div class="col-lg-3 col-md-12 col-sm-12 col-xs-12" style="margin-top: 25px;">
+    <ngb-tabset>
+      <ngb-tab *ngFor="let tarea of tareas; let i = index">
+        <ng-template ngbTabTitle>
+          <div> {{i == 0 ? 'Mis tareas' : i == 1 ? 'Tarea grupal' : 'Tarea general ' }}
+            <span class="badge badge-info">{{ tarea|tareaRealizadas }}</span>
+          </div>
+        </ng-template>
+        <ng-template ngbTabContent>
+          <table class="table table-bordered table-sm ">
+            <thead class="thead-dark">
+              <tr>
+                <th class="text-center" scope="col">Tarea</th>
+                <th class="text-center" scope="col" *ngIf="i == 1">Grupo</th>
+                <th width="10%" class="text-center" scope="col">Realizado</th>
+              </tr>
+            </thead>
+
+            <tbody>
+              <tr *ngIf="(i == 2 && rol == 'Administrador') || i==1 || i==0 ">
+                <td [attr.colspan]="i == 1 ? '1' : '2'">
+                  <input [(ngModel)]="tareaPersonal.descripcion" [disabled]="(grupos.length == 0 && i != 1)"
+                    placeholder="Escriba la tarea y luego presione Enter para agregarla"
+                    (keyup.enter)="agregarTarea(tareaPersonal, i)" class="form-control" type="text" />
+                </td>
+
+                <td *ngIf="i == 1" colspan="2">
+                  <select class="form-control" name="grupo" [disabled]="grupos.length == 0"
+                    [(ngModel)]="tareaPersonal.grupo_id">
+                    <option *ngFor="let grupo of grupos" [value]="grupo.id">{{ grupo.nombre_grupo }}</option>
+                  </select>
+                </td>
+              </tr>
+              <tr *ngIf="tarea.length == 0">
+                <td class="text-center" colspan="3"> No hay tareas a realizar</td>
+              </tr>
+              <ng-container *ngIf="tarea.length > 0">
+                <tr *ngFor="let descTarea of tarea" [ngClass]="{'bg-success' : descTarea.realizado}">
+                  <td>
+                    <p> {{ descTarea.descripcion }} </p>
+                  </td>
+                  <td *ngIf="i == 1">
+                    <p>{{descTarea.grupo.nombre_grupo}}</p>
+                  </td>
+                  <td style="text-align: center;">
+                    <div class="form-check">
+                      <input type="checkbox" class="form-check-input" (change)="realizarTarea(descTarea)"
+                        [(ngModel)]="descTarea.realizado" id="exampleCheck1">
+                    </div>
+                  </td>
+                </tr>
+              </ng-container>
+            </tbody>
+          </table>
+        </ng-template>
+      </ngb-tab>
+
+    </ngb-tabset>
+  </div>
+
+</div>
+<!--div class="container-fluid" >
+  <div id="div-calendar" class="col-sm-8 col-sm-offset-2">
+    <div id="calendar"></div>
+  </div>
+</div-->
+<div class="modal fade" id="myModalHorizontal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel"
+  aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <!-- Modal Header -->
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal">
+          <span aria-hidden="true">&times;</span>
+          <span class="sr-only">Close</span>
+        </button>
+        <h4 class="modal-title" id="myModalLabel">
+          Turno
+        </h4>
+      </div>
+
+      <!-- Modal Body -->
+      <div class="modal-body">
+
+
+        <form class="form-horizontal" role="form" id="eventForm">
+          <div class="form-group">
+            <label class="col-sm-2 control-label" for="tarea">Tarea</label>
+            <div class="col-sm-10">
+              <select class="form-control" id="tarea">
+                <option value="visita">Visita Local</option>
+                <option value="pago">Pago</option>
+                <option value="medidas">Medidas</option>
+                <option value="servicio">Servicio Técnico</option>
+                <option value="nota">Nota</option>
+                <option value="tarea">Tarea</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label class="col-sm-2 control-label" for="desc">Descripción</label>
+            <div class="col-sm-10">
+              <textarea rows="4" class="form-control" id="desc"></textarea>
+            </div>
+          </div>
+
+
+          <!--  area imagenes -->
+          <div class="form-group">
+            <label class="col-sm-2 control-label" for="desc">Imágenes</label>
+            <div class="col-sm-10">
+              <div class="panel panel-default">
+                <div class="panel-body">
+                  <div class="upload-btn-wrapper">
+                    <button class="btn btn-block btn-custom" [disabled]="cargandoEvento">Cargar imágenes</button>
+                    <input type="file" ng2FileSelect accept="image/png,image/jpeg" [uploader]="uploader"
+                      multiple /><br />
+                  </div>
+
+                  <div class="flex-wrap" [ngClass]="cargandoEvento ? 'cargandoFotoEvento' : '' ">
+                    <ng-container *ngIf="!cargandoEvento || currentEventImages.length > 0">
+                      <div class="relative" *ngFor="let image of currentEventImages">
+                        <img src="{{currentEventImagePath +  image.imagen}}"
+                          (click)="visualizarImagen( currentEventImagePath + image.fullimage)"
+                          class="media-object mr-1" />
+                        <span class="fa fa-close eliminar-imagen" (click)="eliminarFotoEvento(image.imagen)"></span>
+                      </div>
+
+                    </ng-container>
+                    <div class="relative" *ngFor="let item of uploader.queue">
+                      <img src="" imgPreview [image]="item?._file" [title]="item?.file?.name" width="100" height="100"
+                        class="media-object mr-1" />
+                      <span class="fa fa-close eliminar-imagen" (click)="uploader.removeFromQueue(item)"></span>
+                    </div>
+
+                  </div>
+                  <ng-container *ngIf="cargandoEvento ">
+                    <div class="flex-center">
+                      <span class="fa fa-refresh fa-spin fa-2x"></span>
+                    </div>
+                  </ng-container>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label class="col-sm-2 control-label" for="nombre">Nombre</label>
+            <div class="col-sm-10">
+              <input type="text" class="form-control" id="nombre" />
+            </div>
+          </div>
+          <div class="form-group">
+            <label class="col-sm-2 control-label" for="telefono">Teléfono</label>
+            <div class="col-sm-10">
+              <input type="text" class="form-control" id="telefono" />
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label class="col-sm-2 control-label">Dirección</label>
+            <div class="col-sm-10">
+              <input type="text" class="form-control" style="margin-bottom: 10px;"
+                (keydown.enter)="$event.preventDefault()" placeholder="Tipee aquí la dirección" autocorrect="off"
+                autocapitalize="off" spellcheck="off" type="text" id="direccion">
+              <agm-map [latitude]="latitud" [fullscreenControl]="true" (mapClick)="placeMarker($event)"
+                [clickableIcons]="false" [usePanning]="true" [streetViewControl]="false" [longitude]="longitud"
+                [zoom]="17">
+                <agm-marker [latitude]="latitud" [longitude]="longitud" [markerClickable]="true"
+                  (markerClick)="placeMarker($event)"></agm-marker>
+              </agm-map>
+              <button class="btn btn-outline-info mt-1 pull-right" (click)="abrirGoogleMaps()"
+                [disabled]="((!latitud) || (latitud.toString() == ''))"><span class="fa fa-map"></span> Abrir Google
+                Maps</button>
+            </div>
+
+
+
+          </div>
+          <div class="form-group">
+            <label class="col-sm-2 control-label" for="horario">Horario</label>
+            <div class="col-sm-10">
+              <input mask="Hh:m0" required placeholder="00:00" class=" form-control" id="horario" />
+            </div>
+          </div>
+          <div class="form-group">
+            <label class="col-sm-2 control-label" for="horario">Día</label>
+            <div class="col-sm-10">
+              <input type="text" mask="d0-M0-0000" class="form-control" id="dia" />
+            </div>
+          </div>
+          <ng-container *ngxPermissionsOnly="['Administrador']">
+
+            <div class="form-group">
+              <label class="col-sm-2 control-label" for="horario">Quien Asistirá</label>
+              <div class="col-sm-10">
+                <ng-select [items]="grupos" bindLabel="nombre_grupo" notFoundText="No se encontró un grupo" name="grupo"
+                  bindValue="id" [multiple]="true" placeholder="Seleccionar grupos" [(ngModel)]="gruposSeleccionados">
+                </ng-select>
+              </div>
+            </div>
+          </ng-container>
+          <div class="form-group">
+            <div class="col-sm-10">
+              <input type="hidden" class="form-control" id="eventId" />
+            </div>
+          </div>
+        </form>
+      </div>
+      <div class="modal-footer" style="display: flex;justify-content: flex-end;">
+        <button type="submit" id="saveEvent" class="btn btn-success" (click)="crearEvento()">Guardar</button>
+        <button type="submit" id="updateEvent" class="btn btn-info" style="display: none;"
+          (click)="actualizarEvento()">Actualizar</button>
+        <button type="submit" id="deleteEvent" class="btn btn-danger" style="display: none;"
+          (click)="eliminarEvento()">Eliminar</button>
+      </div>
+    </div>
+  </div>
+</div>
+<a style="display:none;" id="openMod" data-toggle="modal" href="#myModalHorizontal">Open Modal</a>
+
+<div class="modal fade" id="Calendarmodal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <!-- Modal Header -->
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal">
+          <span aria-hidden="true">&times;</span>
+          <span class="sr-only">Close</span>
+        </button>
+        <h4 class="modal-title" id="myModalLabelProyecto">
+        </h4>
+      </div>
+
+      <!-- Modal Body -->
+      <div class="modal-body">
+
+        <form class="form-horizontal">
+          <div class="form-group">
+            <label class="col-sm-3 " for="cliente">Cliente</label>
+            <div class="col-sm-9" id="clientePlace"></div>
+          </div>
+          <div class="form-group">
+            <label class="col-sm-3 " for="cliente">Fecha</label>
+            <div class="col-sm-9" id="datePlace"></div>
+          </div>
+          <div class="form-group">
+            <label class="col-sm-3" for="cliente">Hora</label>
+            <div class="col-sm-9" id="hourPlace"></div>
+          </div>
+          <div class="form-group">
+            <label class="col-sm-3" for="cliente">Tipo de trabajo</label>
+            <div class="col-sm-9" id="tipoTrabajo"></div>
+          </div>
+          <div class="form-group">
+            <label class="col-sm-3" for="cliente">Comentario</label>
+            <div class="col-sm-9" id="comment"></div>
+          </div>
+          <div class="form-group">
+            <label class="col-sm-3" for="cliente">Teléfono</label>
+            <div class="col-sm-9" id="phone"></div>
+          </div>
+          <div class="form-group">
+            <label class="col-sm-3" for="cliente">Dirección</label>
+            <div class="col-sm-9" id="address"></div>
+          </div>
+          <div class="form-group" *ngIf="modalDetalleSaldo">
+            <label class="col-sm-3" for="saldo">Saldo pendiente</label>
+            <div class="col-sm-9" id="saldo">${{modalDetalleSaldo | number:''}}</div>
+          </div>
+          <ng-container *ngxPermissionsOnly="['Administrador']">
+            <div class="form-group">
+              <label class="col-sm-3" for="cliente">Quién asistirá</label>
+              <div class="col-sm-9">
+
+                <ng-select [items]="grupos" bindLabel="nombre_grupo" notFoundText="No se encontró un grupo" name="grupo"
+                  bindValue="id" [multiple]="true" placeholder="Seleccionar grupos" [disabled]="proyectoTerminado"
+                  [(ngModel)]="gruposSeleccionados">
+                </ng-select>
+              </div>
+            </div>
+          </ng-container>
+          <div class="form-group">
+            <label class="col-sm-3" for="observaciones">Observaciones</label>
+            <div class="col-sm-9">
+              <textarea class="form-control" [(ngModel)]="observacionesProyecto" [disabled]="proyectoTerminado"
+                name="observaciones" placeholder="Si no finalizó la instalación describa aquí los pasos restantes."
+                rows="3"></textarea>
+            </div>
+          </div>
+        </form>
+        <div class="row">
+          <input type="hidden" class="form-control" id="proyectId" />
+        </div>
+        <hr>
+        <div class="row text-center">
+          <div class="col-sm-6 col-xs-6">
+            <button class="btn btn-info" (click)="goToTallerWithProkectId()">Acceder al proyecto</button>
+          </div>
+          <div class="col-sm-6 col-xs-6">
+            <ng-container>
+
+              <button class="btn btn-success" [disabled]="proyectoTerminado" (click)="actualizarProyecto()">Guardar
+                cambios</button>
+            </ng-container>
+          </div>
+        </div>
+        <hr>
+        <div class="row">
+          <div class="col-xs-6"><u><b>Total</b></u></div>
+          <div class="progress">
+            <div id="totalPorcej" class="progress-bar" [ngStyle]="{'min-width': '2em'}" role="progressbar">
+            </div>
+          </div>
+        </div>
+        <div class="row">
+          <div class="col-xs-6">Stock</div>
+          <div class="progress">
+            <div id="stockPorcej" class="progress-bar" [ngStyle]="{'min-width': '2em'}" role="progressbar">
+            </div>
+          </div>
+        </div>
+        <div class="row">
+          <div class="col-xs-6">Piezas</div>
+          <div class="progress">
+            <div id="piezasPorcej" class="progress-bar" [ngStyle]="{'min-width': '2em'}" role="progressbar">
+            </div>
+          </div>
+        </div>
+        <div class="row">
+          <div class="col-xs-6">Tapacantos</div>
+          <div class="progress">
+            <div id="tapacantosPorcej" class="progress-bar" [ngStyle]="{'min-width': '2em'}" role="progressbar">
+            </div>
+          </div>
+        </div>
+        <div class="row">
+          <div class="col-xs-6">Prearmado</div>
+          <div class="progress">
+            <div id="prearmadoPorcej" class="progress-bar" [ngStyle]="{'min-width': '2em'}" role="progressbar">
+            </div>
+          </div>
+        </div>
+        <div class="row">
+          <div class="col-xs-6">Cajones</div>
+          <div class="progress">
+            <div id="cajonesPorcej" class="progress-bar" [ngStyle]="{'min-width': '2em'}" role="progressbar">
+            </div>
+          </div>
+        </div>
+        <div class="row">
+          <div class="col-xs-6">Módulos</div>
+          <div class="progress">
+            <div id="modulosPorcej" class="progress-bar" [ngStyle]="{'min-width': '2em'}" role="progressbar">
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div><!-- /.modal -->
+
+
+<!-- modal para imagenes de evento -->
+<div class="modal fade" id="imagenEventoModal" tabindex="-1" role="dialog" aria-labelledby="imModalLabel"
+  aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <!-- Modal Header -->
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal">
+          <span aria-hidden="true">&times;</span>
+          <span class="sr-only">Close</span>
+        </button>
+        <h4 class="modal-title" id="imModalLabel">
+          Imagen
+        </h4>
+      </div>
+
+      <!-- Modal Body -->
+      <div class="modal-body">
+        <div class="row">
+          <div class="col-md-12 col-sm-12 col-xs-12">
+            <img class="img-responsive center-block" id="imagenEventoPrevisualizacion" src="">
+          </div>
+
+        </div>
+      </div>
+    </div>
+  </div>
+</div> <!-- /.modal -->
+
+
+<div *ngFor="let item of itemsToShowFirstFinal; let myIndex = index" [hidden]="itemsToShowFirstFinal.length == 0">
+  <div class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true"
+    id='proyectoFirst-{{myIndex}}' [hidden]="myIndex>0">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-body">
+          <table align="center">
+            <tr>
+              <td style="font-size: 18px; text-align: center; font-weight: bold;">
+                {{itemsToShowFirstFinal[myIndex].fancyHeader}}
+              </td>
+            </tr>
+          </table>
+          <table *ngIf="itemsToShowFirstFinal[myIndex].hasOwnProperty('cliente')">
+            <tr>
+              <td colspan="2">
+                <p><b>Proyecto: </b>{{itemsToShowFirstFinal[myIndex].cliente.nombre_completo}} -
+                  {{itemsToShowFirstFinal[myIndex].proyecto}}</p>
+              </td>
+            </tr>
+            <tr>
+              <td colspan="2">
+                <p><b>Fecha Instalación: </b>{{itemsToShowFirstFinal[myIndex].instalacion_fecha}}</p>
+              </td>
+            </tr>
+            <tr>
+              <td><b>Quien asistira: </b></td>
+            </tr>
+          </table>
+          <table *ngIf="itemsToShowFirstFinal[myIndex].hasOwnProperty('cliente')">
+            <tr style="height: 30px;">
+              <td style="width: 7%;"><b>Progreso:</b></td>
+              <td class="progress-bar"
+                [ngStyle]="{'background-color': colorProgreso(itemsToShowFirstFinal[myIndex].progreso_total.total), 'width': itemsToShowFirstFinal[myIndex].progreso_total.total + '%', 'min-width': '2em', 'border-radius': '4px'}">
+                {{itemsToShowFirstFinal[myIndex].progreso_total.total.toFixed(2)}}%</td>
+            </tr>
+          </table>
+          <table *ngIf="!itemsToShowFirstFinal[myIndex].hasOwnProperty('cliente')">
+            <tr>
+              <td colspan="2">
+                <p><b>Tarea: </b>{{itemsToShowFirstFinal[myIndex].tarea}}</p>
+              </td>
+            </tr>
+            <tr>
+              <td colspan="2">
+                <p><b>Descripción: </b>{{itemsToShowFirstFinal[myIndex].descripcion}}</p>
+              </td>
+            </tr>
+            <tr>
+              <td colspan="2">
+                <p><b>Día: </b>{{itemsToShowFirstFinal[myIndex].dia}}</p>
+              </td>
+            </tr>
+            <tr>
+              <td colspan="2">
+                <p><b>Dirección: </b>{{itemsToShowFirstFinal[myIndex].direccion}}</p>
+              </td>
+            </tr>
+            <tr>
+              <td><b>Quien asistira: </b></td>
+            </tr>
+          </table>
+          <table>
+            <tr>
+              <!--<td><button [disabled]="myIndex == 0" class='btn btn-default' (click)='showpagesFirst(myIndex, myIndex-1);'>Anterior</button></td>-->
+              <td><button class='btn btn-default' (click)='showpagesFirst(myIndex, myIndex+1);'>OK</button></td>
+            </tr>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
+  <a style="display:none;" id="proyectoFirstOpen-{{myIndex}}" data-toggle="modal" href="#proyectoFirst-{{myIndex}}">Open
+    Modal</a>
+</div>

@@ -1,0 +1,46 @@
+.rotate{
+    -moz-transition: all 0.2s ease;
+    -webkit-transition: all 0.2s ease;
+    transition: all 0.2s ease;
+}
+
+.rotate.down{
+    -ms-transform:rotate(90deg);
+    -moz-transform:rotate(90deg);
+    -webkit-transform:rotate(90deg);
+    transform:rotate(90deg);
+}
+
+.slide {
+    -moz-transition: all 0.2s ease;
+    -webkit-transition: all 0.2s ease;
+    transition: all 0.2s ease;
+}
+.slide.open {
+  -webkit-transition: max-height 2s ease;
+  -moz-transition: max-height 2s ease;
+  transition: max-height 2s ease;
+  max-height: 400px;
+}
+
+td.child {
+    padding:0 !important;
+    border-top: 0px solid #ddd !important;
+}
+
+td.child.open {
+    padding:0 !important;
+    border-top: 1px solid #ddd !important;
+}
+
+.badge-success{
+    background: green;
+}
+
+.badge-danger {
+    background: orange;
+}
+
+.primeraLetraMayuscula{
+    text-transform: capitalize;
+}

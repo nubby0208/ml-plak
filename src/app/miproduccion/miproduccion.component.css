@@ -1,0 +1,14 @@
+.single .calendar-table {
+    height:45px;
+    overflow: hidden;
+}
+
+.single .table-condensed tbody{
+    position: absolute;
+    top: -19px;
+    width: 104px;
+    right: 76px;
+    height: 60px;
+    overflow: hidden;
+    opacity: 0;
+}

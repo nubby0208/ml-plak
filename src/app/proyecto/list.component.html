@@ -1,0 +1,109 @@
+<div id="app-proyecto-list" class="container-fluid">
+	<div class="col-sm-10 col-sm-offset-1">
+		<div class="col-sm-12 text-center">
+			<h2>
+				Listado de proyectos
+			</h2>
+
+			<hr>
+		</div>
+
+		<div class="col-sm-8 col-sm-offset-2 form-horizontal">
+			<label class="control-label col-sm-4">Búsqueda</label>
+			<div class="col-sm-6">
+				<input type="text" name="filtro" id="filtro" class="form-control" [(ngModel)]="filtro" (ngModelChange)="onChangeFiltro($event)">
+			</div>
+
+			<div class="col-sm-12">
+				<hr>
+			</div>
+		</div>
+
+		<div id="proyecto-listado" class="col-sm-12">
+			<table class="table table-hover">
+				<thead>
+					<th>#</th>
+					<th>Proyecto</th>
+					<th>Cliente</th>
+					<th>Valor</th>
+					<th>Seña</th>
+					<th><span title="Fecha de Instalación">F. Instalación</span></th>
+					<th><span title="Comentario de Instalación">C. Instalación</span></th>
+					<th>Visible</th>
+					<th>Acciones</th>
+				</thead>
+
+				<tbody>
+					<ng-container *ngIf="proyectos; else emptyProyectos">
+						<ng-container *ngFor="let proyecto of proyectos; let i = index">
+							<tr [hidden]="!proyecto.show">
+								<td>{{ i+1 }}</td>
+								<td>{{ proyecto.proyecto }}</td>
+								<td>{{ proyecto.cliente.nombre_completo }}</td>
+								<td>{{ proyecto.valor_total }}</td>
+								<td>{{ proyecto.senia }}</td>
+								<td>{{ proyecto.instalacion_fecha }}</td>
+								<td>{{ proyecto.instalacion_comentario }}</td>
+								<td>
+									<select id="activo" class="form-control" [(ngModel)]="proyecto.activo" (ngModelChange)="onChangeActive($event, proyecto)">
+										<option *ngFor="let tipo of tipos_activos" [value]="tipo.value">{{ tipo.name }}</option>
+									</select>
+								</td>
+								<td>
+									<button class="btn btn-xs btn-warning" (click)="edit(i)"><span class="glyphicon glyphicon-pencil"></span></button>
+									<button *ngxPermissionsOnly="['Administrador']" title="Administrar Piezas Proyecto" class="btn btn-xs btn-info" (click)="showPiezas(proyecto.id, i)"><span class="glyphicon glyphicon-cog"></span></button>
+									<button class="btn btn-xs btn-danger" (click)="delete(proyecto)"><span class="glyphicon glyphicon-trash"></span></button>
+								</td>
+							</tr>
+						</ng-container>
+					</ng-container>
+
+					<ng-template #emptyProyectos>
+						<tr>
+							<td class="text-center" colspan="9"><strong>No posee proyectos registrados</strong></td>
+						</tr>
+					</ng-template>
+				</tbody>
+			</table>
+		</div>
+
+		<div id="modal-proyecto-form" class="modal fade" tabindex="-1">
+			<div class="modal-dialog">
+				<div class="modal-content">
+					<div class="modal-header">
+						<button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+						<p class="modal-title">Proyecto</p>
+					</div>
+					<div class="modal-body">
+						<app-proyecto-form></app-proyecto-form>
+					</div>
+					<div class="modal-footer">
+						<button type="button" class="btn btn-primary" (click)="formComponent.save()">Actualizar</button>
+						<button type="button" class="btn btn-default" data-dismiss="modal">Cerrar</button>
+					</div>
+				</div>
+			</div>
+		</div>
+		
+		<div id="modal_admin_piezas" class="modal fade" tabindex="-1">
+			<div class="modal-dialog" role="document" style="width: 80% !important;">
+				<div class="modal-content">
+					<div class="modal-header">
+						<button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+						<p class="modal-title">{{titulo_modal_edit_piezas}}</p>
+					</div>
+					<div class="modal-body">
+						<app-admin-piezas (chage_title)="setTituloModalEditPiezas($event)"></app-admin-piezas>
+					</div>
+					<div class="modal-footer">
+						<button *ngIf="adminPiezasComponent.show_form && adminPiezasComponent.newPieza.id" type="button" class="btn btn-success" (click)="adminPiezasComponent.update()">Actualizar</button>
+						<button *ngIf="adminPiezasComponent.show_form && !adminPiezasComponent.newPieza.id" type="button" class="btn btn-success" (click)="adminPiezasComponent.save()">Guardar</button>
+						<button type="button" class="btn btn-default" (click)="adminPiezasComponent.setShowForm( false)">Volver</button>
+						<button type="button" class="btn btn-default" data-dismiss="modal">Cerrar</button>
+					</div>
+				</div>
+			</div>
+		</div>
+
+	</div>
+</div>

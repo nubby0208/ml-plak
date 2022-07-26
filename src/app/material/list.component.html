@@ -1,0 +1,184 @@
+<div id="app-material-list" class="container-fluid">
+	<div class="col-sm-10 col-sm-offset-1">
+		<div class="col-sm-12 text-center">
+			<h2>
+				Listado de materiales
+				<button type="button" class="btn btn-xs btn-success" (click)="create()">
+					<span class="glyphicon glyphicon-plus"></span>
+					Nuevo
+				</button>
+			</h2>
+
+			<hr>
+		</div>
+
+		<div class="col-sm-12">
+			<div class="panel panel-default col-10">
+				<div class="panel-heading"><h3 class="panel-title">Filtar Por Tipo</h3>
+				</div>
+				<div class="panel-body"> 
+					<div class="form-group">
+						<label class="control-label col-sm-4" for="tipo_materiales">Tipo Material</label>
+						<div class="col-sm-8">
+							<select (change)="onChangeTipoMaterial($event)" id="tipo_materiales" class="form-control" name="tipo_materiales" [(ngModel)]="tipoMaterialSelected">
+								<option value="0" selected="selected" disabled="disabled">Seleccione un tipo de material</option>
+								<option *ngFor="let tipo_material of tipo_materiales" [value]=tipo_material.id>{{ tipo_material.tipo }}</option>
+							</select>
+						</div>
+					</div>
+				</div> 
+			</div>
+		</div>
+
+		<div id="material-listado" class="col-sm-12">
+			<table class="table table-hover">
+				<thead>
+					<th>#</th>
+					<th *ngIf="tipoMaterialSelected != 1">Nombre</th>
+					<th>Material</th>
+					<th>Alto</th>
+					<th>Ancho Veta</th>
+					<th>Desc. Alto</th>
+					<th>Desc. Ancho</th>
+					<th>Espesor</th>
+					<th>Textura</th>
+					<th>Color HTML</th>
+					<th>Precio mt<sup>2</sup></th>
+					<th>Precio placa</th>
+					<th>Veta</th>
+					<th>LV</th>
+					<th>Tipo</th>
+					<th>Default</th>
+					<th style="text-align: right; min-width: 80px">Acciones</th>
+				</thead>
+
+				<tbody>
+					<ng-container *ngIf="(materiales && materiales.length); else emptyMateriales">
+						<tr *ngFor="let material of materiales; let i = index">
+							<td>{{ i+1 }}</td>
+							<td *ngIf="tipoMaterialSelected != 1">{{ material.nombre }}</td>
+							<td>{{ material.material }}</td>
+							<td>{{ material.alto }}</td>
+							<td>{{ material.ancho_veta || 0}}</td>
+							<td>{{ material.descuento_alto || 0}}</td>
+							<td>{{ material.descuento_ancho || 0}}</td>
+							<td>{{ material.espesor || 0 }}</td>
+							<!-- <td><img style="width: 50px; height: 50px" *ngIf="material.link_textura1" src="{{ material.link_textura1 }}"></td> -->
+							<td>
+								<button type="button" class="btn btn-xs btn-primary" [disabled]="!material.texture_exists" (click)="showTexture(material)" [title]="(material.texture_exists) ? 'Mostrar textura' : 'Textura no disponible'">
+									<span class="glyphicon glyphicon-picture"></span>
+								</button>
+							</td>
+							<td style="text-align: center; vertical-align: middle !important;"><input  *ngIf="material.link_textura2" type="color" disabled="true" value="{{ material.link_textura2 }}"></td>
+							<td>${{ material.precio_mt2 || 0.00}}</td>
+							<td>${{ material.precio_placa || 0.00}}</td>
+							<td><span *ngIf="material.veta==1">Si</span><span *ngIf="material.veta==0">No</span></td>
+							<td>{{ material.largo_veta || 0}}</td>
+							<td>{{ material.tipo_materiales.tipo }}</td>
+							<td><input type="checkbox" (change)="toggleDefault(i)" title="Default" [(ngModel)]="material.default"/></td>
+							<td style="text-align: right; min-width: 80px">
+								<button class="btn btn-xs btn-warning" (click)="edit(i)"><span class="glyphicon glyphicon-pencil"></span></button>
+								<button class="btn btn-xs btn-danger" (click)="delete(material.id)"><span class="glyphicon glyphicon-trash"></span></button>
+								<!-- <button title="Ver Texturas Asociadas al Material " class="btn btn-xs btn-info" (click)="showTextures(material.material)"><span class="	glyphicon glyphicon-picture"></span></button> -->
+							</td>
+						</tr>
+					</ng-container>
+
+					<ng-template #emptyMateriales>
+						<tr>
+							<td class="text-center" colspan="17"><strong>No posee materiales registrados</strong></td>
+						</tr>
+					</ng-template>
+				</tbody>
+			</table>
+		</div>
+
+		<div id="modal-material" class="modal fade" tabindex="-1">
+			<div class="modal-dialog">
+				<div class="modal-content">
+					<div class="modal-header">
+						<button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+						<h4 class="modal-title">Material</h4>
+					</div>
+					<div class="modal-body">
+						<app-material-form [(inputMateriales)]="materiales" ></app-material-form>
+					</div>
+					<div class="modal-footer">
+						<button type="button" class="btn btn-success" (click)="materialFormComponent.save()">Guardar</button>
+						<button type="button" class="btn btn-default" data-dismiss="modal">Cerrar</button>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+
+<div class="modal fade" id="modal-textura" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+	<div class="modal-dialog">
+		<div class="modal-content">
+			<div class="modal-header">
+				<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+					<span aria-hidden="true">&times;</span>
+				</button>
+				<h4 class="modal-title" id="exampleModalLabel">{{ modalTextura.material }}</h4>
+			</div>
+
+			<div class="modal-body">
+				<div class="panel panel-default" >
+					<div class="panel-body">
+						<div class="loading-area" *ngIf="modalTextura.textura.length == 0">
+							<div><img [src]="urlOrigin+'assets/img/spinner.gif'"/></div>
+						</div>
+
+						<div>
+							<img class="img-responsive image" [src]="modalTextura.textura">
+						</div>
+					</div>
+				</div>
+
+			</div>
+			<div class="modal-footer">
+				<button type="button" class="btn btn-default" data-dismiss="modal">Cerrar</button>
+			</div>
+		</div>
+	</div>
+</div>
+
+
+<!-- Modal Para Texturas 
+<div class="modal fade" id="modal_texturas" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+	<div class="modal-dialog">
+		<div class="modal-content">
+			<div class="modal-header">
+				<h3 class="modal-title" id="exampleModalLabel">Texturas del Material {{ material_select | uppercase }}</h3>
+				<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+					<span aria-hidden="true">&times;</span>
+				</button>
+			</div>
+
+			<div class="modal-body">
+				<div class="panel panel-default" >
+				<div class="panel-body">
+					<div>
+				    <div *ngIf="textura1" class="image_wrapper">
+				    	<p class="image_header">Textura 1</p>
+				    	<img class="img-responsive image" src="{{ textura1 }}" style="padding: 5px; width: 230px; height: 230px">
+				    	<button title="Remover Textura"  class="btn-xs-danger remove">X</button>
+				    </div>
+				    <div *ngIf="textura2" class="image_wrapper">
+				    	<p class="image_header">Textura 2</p>
+				    	<img class="img-responsive image" src="{{ textura2 }}" style="padding: 5px; width: 230px; height: 230px">
+				    	<button title="Remover Textura" class="btn-xs-danger remove">X</button>
+				    </div>
+					</div>
+				</div>  
+		</div>
+
+			</div>
+			<div class="modal-footer">
+				
+			</div>
+		</div>
+	</div>
+</div>
+	end Texturas -->

@@ -1,0 +1,63 @@
+<div class="row text-center" style="display: flex; align-items: center;">
+    <div class="col-md-4 col-sm-4 col-xs-4" style="padding: 0px;">
+        <div class="btn-group">
+            <div class="btn btn-primary hidden-md hidden-lg" mwlCalendarPreviousView [view]="view"
+                [(viewDate)]="viewDate" (viewDateChange)="viewDateChange.next(viewDate)">
+                <span class="fa fa-arrow-left" style="font-size: 11px;"> </span>
+            </div>
+            <div class="btn btn-primary hidden-sm hidden-xs" mwlCalendarPreviousView [view]="view"
+                [(viewDate)]="viewDate" (viewDateChange)="viewDateChange.next(viewDate)">
+                Anterior
+            </div>
+            <div class="btn btn-outline-secondary  hidden-md hidden-lg" mwlCalendarToday [(viewDate)]="viewDate"
+                (viewDateChange)="viewDateChange.next(viewDate)">
+                <span class="fa fa-arrow-down" style="font-size: 11px;"> </span>
+            </div>
+            <div class="btn btn-outline-secondary hidden-sm hidden-xs" mwlCalendarToday [(viewDate)]="viewDate"
+                (viewDateChange)="viewDateChange.next(viewDate)">
+                Hoy
+            </div>
+            <div class="btn btn-primary hidden-md hidden-lg" mwlCalendarNextView [view]="view" [(viewDate)]="viewDate"
+                (viewDateChange)="viewDateChange.next(viewDate)">
+                <span class="fa fa-arrow-right" style="font-size: 11px;"> </span>
+            </div>
+            <div class="btn btn-primary hidden-xs hidden-sm" mwlCalendarNextView [view]="view" [(viewDate)]="viewDate"
+                (viewDateChange)="viewDateChange.next(viewDate)">
+                Siguiente
+            </div>
+        </div>
+    </div>
+    <div class="col-md-4 col-sm-4 col-xs-4" style="text-transform: capitalize">
+        <h3>{{ viewDate | calendarDate: (view + 'ViewTitle'):'es-AR':weekStartsOn }}</h3>
+    </div>
+    <div class="col-md-4 col-sm-4 col-xs-4" style="padding: 0px;">
+        <div class="btn-group">
+            <div class="btn btn-primary hidden-xs  hidden-sm" (click)="viewChange.emit('month')"
+                [class.active]="view === 'month'">
+                Mes
+            </div>
+            <div class="btn btn-primary hidden-md hidden-lg" (click)="viewChange.emit('month')"
+                [class.active]="view === 'month'">
+                M
+            </div>
+            <div class="btn btn-primary hidden-xs hidden-sm " (click)="viewChange.emit('week')"
+                [class.active]="view === 'week'">
+                Semana
+            </div>
+            <div class="btn btn-primary hidden-md hidden-lg" (click)="viewChange.emit('week')"
+                [class.active]="view === 'week'">
+                S
+            </div>
+
+            <div class="btn btn-primary hidden-xs hidden-sm" (click)="viewChange.emit('day')"
+                [class.active]="view === 'day'">
+                Día
+            </div>
+            <div class="btn btn-primary hidden-md hidden-lg" (click)="viewChange.emit('day')"
+                [class.active]="view === 'day'">
+                D
+            </div>
+        </div>
+    </div>
+</div>
+<br />

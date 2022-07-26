@@ -1,0 +1,112 @@
+<div id="app-grupo-list" class="container-fluid">
+	<div class="col-sm-10 col-sm-offset-1">
+		<div class="col-sm-12 text-center">
+			<h2>
+				Listado de grupos
+				<button type="button" class="btn btn-xs btn-success" (click)="modalGrupo()">
+					<span class="glyphicon glyphicon-plus"></span>
+					Nuevo
+				</button>
+			</h2>
+			<hr>
+		</div>
+
+		<div id="grupo-listado" class="col-sm-12">
+			<ngx-datatable #tablaGrupo class="bootstrap" [columnMode]="'force'" [rows]="grupos" [scrollbarH]="true"
+				[rowHeight]="50" [loadingIndicator]="loadingIndicator" [headerHeight]="50" rowHeight="auto">
+
+				<ngx-datatable-row-detail [rowHeight]="'auto'" #myDetailRow>
+					<ng-template let-row="row" let-expanded="expanded" ngx-datatable-row-detail-template>
+						<div>
+							<h4>Usuarios del grupo:</h4>
+							<p style="margin-left: 10px;;" *ngFor="let usuario of row.grupo_usuarios"
+								class="primeraLetraMayuscula">
+								- {{usuario.usuario.nombre_completo}}</p>
+						</div>
+					</ng-template>
+				</ngx-datatable-row-detail>
+
+				<ngx-datatable-column [width]="50" [resizeable]="false" [sortable]="false" [draggable]="false"
+					[canAutoResize]="false">
+					<ng-template let-row="row" let-expanded="expanded" ngx-datatable-cell-template>
+						<a href="javascript:void(0)" [class.datatable-icon-right]="!expanded"
+							[class.datatable-icon-down]="expanded" title="Expandir/collapsar fila"
+							(click)="expandirFila(row)">
+						</a>
+					</ng-template>
+				</ngx-datatable-column>
+				<ngx-datatable-column name="Nombre del grupo">
+					<ng-template let-row="row" style="border-left: 1px solid #d1d4d7;" ngx-datatable-cell-template>
+						<strong><span class="badge badge-info">{{row.grupo_usuarios.length}}</span>
+							{{ row.nombre_grupo }} </strong>
+					</ng-template>
+				</ngx-datatable-column>
+				<ngx-datatable-column name="Estado">
+					<ng-template let-row="row" style="border-left: 1px solid #d1d4d7;" ngx-datatable-cell-template>
+						<span class="badge" (click)="cambiarEstado(row)"
+							[ngClass]="row.activo ? 'badge-success' : 'badge-danger'">{{row.activo ? 'Activo' : 'Inactivo'}}
+						</span>
+					</ng-template>
+				</ngx-datatable-column>
+				<ngx-datatable-column name="Editar" [width]="50">
+					<ng-template let-row="row" style="border-left: 1px solid #d1d4d7;" ngx-datatable-cell-template>
+						<button (click)="seleccionarGrupo(row)" class="btn btn-info btn-sm"><span
+								class="fa fa-edit"></span></button>
+					</ng-template>
+				</ngx-datatable-column>
+			</ngx-datatable>
+		</div>
+
+		<div id="modal-grupo" class="modal fade" tabindex="-1">
+			<div class="modal-dialog">
+				<div class="modal-content">
+					<div class="modal-header">
+						<button type="button" class="close" data-dismiss="modal" aria-label="Close"><span
+								aria-hidden="true">&times;</span></button>
+						<h4 class="modal-title">Grupo</h4>
+					</div>
+					<div class="modal-body">
+						<div id="app-grupo-form" class="container-fluid">
+							<div id="" class="col-sm-12">
+								<form id="form-grupo" class="form-horizontal" action="#!" method="post">
+									<div class="form-group">
+										<label class="control-label col-sm-4" for="nombre_grupo">Nombre del
+											grupo</label>
+										<div class="col-sm-8">
+											<input id="nombre_grupo" class="form-control" name="nombre_grupo"
+												type="text" [(ngModel)]="grupo.nombre_grupo ">
+										</div>
+									</div>
+
+									<div class="form-group mt-2">
+										<label class="control-label col-sm-4" for="integrantes">Integrantes</label>
+										<div class="col-sm-8">
+											<ng-container *ngIf="usuarios.length > 0">
+												<ng-select [items]="usuarios" [closeOnSelect]="false"
+													bindLabel="nombre_completo"
+													notFoundText="No se encontró un nombre de usuario"
+													name="nombre_completo" bindValue="id" [multiple]="true"
+													placeholder="Seleccionar integrantes"
+													[(ngModel)]="grupo.integrantes">
+												</ng-select>
+											</ng-container>
+										</div>
+									</div>
+								</form>
+							</div>
+						</div>
+					</div>
+					<div class="modal-footer">
+						<button type="button" class="btn btn-success"
+							[disabled]="(grupo.integrantes.length == 0 || grupo.nombre_grupo.length == 0)"
+							*ngIf="!boolEditar" (click)="nuevoGrupo()">Guardar</button>
+						<button type="button" class="btn btn-success"
+							[disabled]="(grupo.integrantes.length == 0 || grupo.nombre_grupo.length == 0)"
+							*ngIf="boolEditar" (click)="editarGrupo(grupo)">Editar</button>
+						<button type="button" class="btn btn-default" data-dismiss="modal">Cerrar</button>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>

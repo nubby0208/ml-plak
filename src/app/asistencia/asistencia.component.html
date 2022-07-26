@@ -1,0 +1,147 @@
+<div id="app-asistencia" class="container">
+	<swal
+		#successSwal
+		title="¡Enhorabuena!"
+		text="¡Asistencia registrada con éxito!"
+		type="success"
+		(cancel)="cancelAction()">
+	</swal>
+
+	<div class="col-sm-6">
+		<div class="col-sm-12 text-center">
+			<h4>Registro de asistencia</h4>
+			<hr>
+		</div>
+
+		<div id="form-asistencia" class="col-sm-12">
+			<ng-container *ngIf="messageAlert.length > 0">
+				<div *ngFor="let message of messageAlert" class="alert alert-{{ message.type }}">
+					<button *ngIf="!message.keep" type="button" class="close" data-dismiss="alert" aria-label="Close">
+						<span aria-hidden="true">&times;</span>
+					</button>
+					{{ message.msg }}
+				</div>
+			</ng-container>
+
+			<form action="post" class="form-horizontal">
+				<div class="form-group">
+					<label for="type" class="control-label col-sm-3">Tipo</label>
+					<div class="col-sm-9">
+						<select id="type" class="form-control" name="type" [(ngModel)]="formData.type">
+							<ng-container *ngIf="types.length > 0">
+								<option *ngFor="let type of types" [value]="type.id">{{ type.tipo }}</option>
+							</ng-container>
+						</select>
+					</div>
+				</div>
+
+				<div *ngIf="late && (formData.type == 2)">
+					<hr>
+					<div class="form-group">
+						<label for="cause" class="control-label col-sm-3">Causa</label>
+						<div class="col-sm-9">
+							<select id="cause" class="form-control" name="cause" [(ngModel)]="formData.cause">
+								<option *ngFor="let cause of causes" [value]="cause.id">{{ cause.causa }}</option>
+							</select>
+						</div>
+					</div>
+				</div>
+
+				<div *ngIf="(late && (formData.type == 2)) || formData.type == 6">
+					<hr>
+					<div class="form-group">
+						<label for="observation" class="control-label col-sm-3">Observación</label>
+						<div class="col-sm-9">
+							<textarea id="observation" class="form-control" name="observation" cols="30" rows="5" [(ngModel)]="formData.observation"></textarea>
+						</div>
+					</div>
+				</div>
+
+				<div *ngIf="formData.type == 3 || formData.type == 4 || formData.type == 5">
+					<hr>
+					<div class="form-group">
+						<label for="tipo_salida" class="control-label col-sm-3">Tipo salida</label>
+						<div class="col-sm-9">
+							<select id="cause" class="form-control" name="tipo_salida" [(ngModel)]="formData.tipo_salida">
+								<option *ngFor="let salida of tipos_salidas" [value]="salida.id">{{ salida.tipo }}</option>
+							</select>
+						</div>
+					</div>
+
+					<div class="form-group">
+						<label for="cliente" class="control-label col-sm-3">Cliente</label>
+						<div class="col-sm-9">
+						<select id="cliente" class="form-control" name="cliente" [(ngModel)]="formData.cliente">
+							<option *ngFor="let cliente of clientes" [value]="cliente.nombre_completo">{{ cliente.nombre_completo }}</option>
+						</select>
+						</div>
+					</div>
+				</div>
+
+				<div class="form-group text-center">
+					<button type="button" class="btn btn-success" (click)="store()" [disabled]="sendingButton">Enviar</button>
+				</div>
+			</form>
+		</div>
+	</div>
+
+	<div class="col-sm-6">
+		<div class="col-sm-12 text-center">
+			<h4>Listado de asistencia</h4>
+			<hr>
+		</div>
+
+		<div id="today-asistencia" class="col-sm-12">
+			<table class="table table-hover">
+				<thead>
+					<th>#</th>
+					<th>Fecha</th>
+					<th>Tipo</th>
+					<th>Causa/Salida</th>
+					<th>Observación</th>
+				</thead>
+
+				<tbody>
+					<ng-container *ngIf="checks.length > 0; else emptyTodayAsistencias">
+						<tr *ngFor="let check of checks; let i = index">
+							<td>{{ i+1 }}</td>
+							<td>{{ check.fecha }}</td>
+							<td>{{ check.tipo_asistencia.tipo  }}</td>
+							<td>{{ (check.tipo_asistencia_id == 3 || check.tipo_asistencia_id == 4 || check.tipo_asistencia_id == 5)
+								? (check.tipo_salida.tipo)
+								: (check.check_causa) ? check.check_causa.causa : 'N/A' }}</td>
+							<td>{{ (check.observacion) ? check.observacion : 'N/A' }}</td>
+						</tr>
+					</ng-container>
+
+					<ng-template #emptyTodayAsistencias>
+						<tr>
+							<td class="text-center" colspan="5"><strong>No posee ningún registro para el día de hoy</strong></td>
+						</tr>
+					</ng-template>
+				</tbody>
+			</table>
+		</div>
+	</div>
+
+	<div *ngIf="showTable" id="table-asistencia" class="col-sm-12"></div>
+
+	<div id="modal-observation" class="modal fade" tabindex="-1">
+		<div class="modal-dialog">
+			<div class="modal-content">
+				<div class="modal-header">
+					<button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+					<h4 class="modal-title">Motivo</h4>
+				</div>
+				<div class="modal-body">
+				</div>
+				<div class="modal-footer">
+					<button type="button" class="btn btn-default" data-dismiss="modal">Cerrar</button>
+					<button type="button" class="btn btn-primary">Guardar</button>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+
+<!-- <app&#45;user&#45;selector (onSelected)="onSelectedUser($event)"></app&#45;user&#45;selector> -->

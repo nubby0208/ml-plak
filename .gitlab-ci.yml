@@ -1,0 +1,47 @@
+stages:
+  - dev
+  - staging
+  - deploy
+
+mlPlak-dev:
+  stage: dev
+  image: node:12
+  script:
+    - 'which ssh-agent || ( apt-get update -y && apt-get install openssh-client -y )'
+    - eval $(ssh-agent -s)
+    - ssh-add <(echo "$SSH_PRIVATE_KEY_MLPLAK")
+    - mkdir -p ~/.ssh
+    - '[[ -f /.dockerenv ]] && echo -e "Host *\n\tStrictHostKeyChecking no\n\n" > ~/.ssh/config'
+    - ssh mlplak@168.226.214.144 "cd dev/ml-plak/ && git pull sshOrigin dev"
+    - ssh mlplak@168.226.214.144 "dev/ml-plak/dev_deploy.sh"
+  only:
+    - dev
+
+mlPlak-staging:
+  stage: staging
+  image: node:12
+  script:
+    - 'which ssh-agent || ( apt-get update -y && apt-get install openssh-client -y )'
+    - eval $(ssh-agent -s)
+    - ssh-add <(echo "$SSH_PRIVATE_KEY_MLPLAK")
+    - mkdir -p ~/.ssh
+    - '[[ -f /.dockerenv ]] && echo -e "Host *\n\tStrictHostKeyChecking no\n\n" > ~/.ssh/config'
+    - ssh mlplak@168.226.214.144 "cd stage/ml-plak/ && git pull sshOrigin master"
+    - ssh mlplak@168.226.214.144 "stage/ml-plak/staging_deploy.sh"
+  only:
+    - master
+
+mlPlak-prod:
+  stage: deploy
+  image: node:12
+  script:
+    - 'which ssh-agent || ( apt-get update -y && apt-get install openssh-client -y )'
+    - eval $(ssh-agent -s)
+    - ssh-add <(echo "$SSH_PRIVATE_KEY_MLPLAK")
+    - mkdir -p ~/.ssh
+    - '[[ -f /.dockerenv ]] && echo -e "Host *\n\tStrictHostKeyChecking no\n\n" > ~/.ssh/config'
+    - ssh mlplak@168.226.214.144 "cd production/ml-plak/ && git pull sshOrigin production"
+    - ssh mlplak@168.226.214.144 "production/ml-plak/production_deploy.sh"
+  when: manual
+  only:
+    - production

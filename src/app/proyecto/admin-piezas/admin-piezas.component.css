@@ -1,0 +1,11 @@
+.modal-header {
+    font-weight: bold !important;
+    font-size: 3em !important;
+    text-align: center;
+    background-color: #676d71;
+}
+
+.form-group {
+    margin-bottom: 15px;
+    padding-bottom: 25px;
+}

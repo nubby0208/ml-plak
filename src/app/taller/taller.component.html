@@ -1,0 +1,1240 @@
+<div id="app-taller" class="container-fluid">
+	<swal #confirmationAllTapacantos title="¿Desea completar todos los tapcantos?"
+		text="Todos los tapacantos tendrán estado Ok" type="question" [options]="{showCancelButton: true}"
+		(confirm)="handlerSwalTapacantos($event)">
+	</swal>
+
+	<div class="col-sm-10 col-sm-offset-1" style="padding: 0">
+		<div class="row">
+			<div class="col-sm-12 text-center">
+				<h2>Taller</h2>
+				<hr>
+			</div>
+
+			<div class="col-sm-12">
+				<div class="form-horizontal">
+					<div class="col-sm-12 col-xs-offset-1">
+						<label for="cliente" class="col-sm-1 control-label text-left">Proyecto</label>
+						<div class="col-sm-7">
+							<select style="min-width:100px;" id="cliente" [disabled]="loading" class="form-control"
+								name="cliente" [ngModel]="proyectoSelected" (ngModelChange)="onChangeProyecto($event)">
+								<option value="0">Seleccione un cliente</option>
+								<ng-container *ngFor="let cliente of clientes">
+									<ng-container *ngFor="let proyecto of cliente.proyectos">
+										<option
+											*ngIf="cliente.has_projects_active && ((proyecto.activo == 1) || ((proyecto.activo == null) && (_moment(proyecto.instalacion_fecha).add(96, 'hours').diff(_moment(), 'hours') >= 0)))"
+											[value]="proyecto.id">{{ cliente.nombre_completo }} -
+											{{ proyecto.proyecto }}</option>
+									</ng-container>
+								</ng-container>
+							</select>
+						</div>
+
+						<div class="col-sm-3 space-around project-options">
+							<button class="btn btn-sm btn-primary" (click)="viewGallery()"
+								[disabled]="!images_project">
+								<span class="fa fa-picture-o"></span>
+							</button>
+
+							<a *ngIf="projectUrl" href="{{projectUrl}}" target="_blank">Abrir en Diseño</a>
+
+							<button class="btn btn-success" [disabled]="loading || reportes.length == 0"
+								*ngIf="!proyectoInfo?.finalizado" mwlConfirmationPopover popoverTitle="Instalación"
+								popoverMessage="¿Finalizó la instalación?" confirmText="Sí" cancelText="No"
+								(confirm)="finalizarProyecto()" (cancel)="observacionesCalendario()">Finalizar proyecto</button>
+							<ng-template [ngxPermissionsOnly]="['Administrador']">
+								<button class="btn btn-success" [disabled]="loading" (click)="reabrirProyecto()"
+									*ngIf="proyectoInfo?.finalizado"> Reabrir
+									proyecto</button>
+							</ng-template>
+						</div>
+					</div>
+
+				</div>
+			</div>
+
+			<div class="col-sm-12">
+
+				<ul class="nav nav-tabs nav-justified" role="tablist">
+					<li role="presentation" [ngClass]="{'active': !haveResponsible}">
+						<a href="#general" role="tab" aria-controls="General" data-toggle="tab">General</a>
+					</li>
+
+					<li role="presentation">
+						<a href="#stock" role="tab" aria-controls="Cortes" data-toggle="tab">Stock</a>
+					</li>
+
+					<li role="presentation">
+						<a href="#cortes" role="tab" aria-controls="Cortes" data-toggle="tab">Cortes</a>
+					</li>
+
+					<li role="presentation" [ngClass]="{'disabled': !haveResponsible}" (click)="alert()">
+						<a href="#tapacantos" role="tab" aria-controls="Tapacantos" data-toggle="tab">Tapacantos</a>
+					</li>
+
+					<li role="presentation" [ngClass]="{'disabled': !haveResponsible}" (click)="alert()">
+						<a href="#prearmado" role="tab" aria-controls="Prearmado" data-toggle="tab">Prearmado</a>
+					</li>
+
+					<li role="presentation" [ngClass]="{'disabled': !haveResponsible}" (click)="alert()">
+						<a href="#cajones" role="tab" aria-controls="Módulos" data-toggle="tab">Cajones</a>
+					</li>
+
+					<li role="presentation" [ngClass]="{'disabled': !haveResponsible}" (click)="alert()">
+						<a href="#modulos" role="tab" aria-controls="Módulos" data-toggle="tab">Módulos</a>
+					</li>
+					<li role="presentation" class="disabled">
+						<a href="#encuesta" role="tab" aria-controls="Encuesta" data-toggle="tab">Encuesta</a>
+					</li>
+				</ul>
+
+				<div class="tab-content">
+					<div id="general" class="tab-pane active" role="tabpanel">
+						<div class="table-responsive">
+							<table class="table table-hover table-bordered one-column" style="border: none;">
+								<tbody>
+									<tr>
+										<th>Nombre</th>
+										<td>{{ clienteInfo?.nombre_completo }} </td>
+										<th>Proyecto</th>
+										<td>{{ proyectoInfo?.proyecto }}</td>
+									</tr>
+									<tr>
+										<th>Exportado por</th>
+										<td>{{ exportedBy }} </td>
+										<!-- <th>Proyecto</th> -->
+										<!-- <td>{{ proyectoInfo?.proyecto }}</td> -->
+									</tr>
+									<tr>
+										<th>Encargado de proyecto</th>
+										<td>{{ proyectoInfo?.responsible?.usuario?.nombre_completo }}
+											<span *ngIf="!haveResponsible"><button (click)="GoResponsible()"
+													class="btn-edit-info btn btn-xs btn-warning glyphicon glyphicon-pencil"></button></span>
+											<span *ngxPermissionsOnly="['Administrador']"><button
+													*ngIf="haveResponsible"
+													(click)="deleteResponsible(proyectoInfo?.id)" type="button"
+													class="btn btn-xs btn-danger glyphicon glyphicon-remove"></button></span>
+										</td>
+										<th *ngxPermissionsOnly="['Administrador']">Total</th>
+										<td *ngxPermissionsOnly="['Administrador']">
+											<div style="display: flex; padding-left: 3px; padding-right: 0px">
+												<span style="flex:1">{{cajaInfo?.total || proyectoInfo?.valor_total}}</span>
+												<button (click)="openCajaDetails()" *ngIf="cajaInfo?.total" type="button"
+												class="btn btn-xs btn-success glyphicon glyphicon-info-sign"></button>
+											</div>
+										</td>
+									</tr>
+									<tr>
+										<th>Dirección</th>
+										<td>
+											<div class="col-sm-12 no-padding"
+												*ngIf="editInfo.direccion; else elseEditDireccion">
+												<div class="col-sm-10 no-padding">
+													<input [(ngModel)]="newInfo.direccion.value" type="text"
+														class="form-control" style="height: 27px">
+												</div>
+												<div class="col-sm-2" style="padding-left: 3px; padding-right: 0px">
+													<button (click)="onOkEditInfo('direccion')" type="button"
+														class="btn btn-xs btn-success glyphicon glyphicon-ok"></button>
+													<button (click)="onCancelEditInfo('direccion')" type="button"
+														class="btn btn-xs btn-danger glyphicon glyphicon-remove"></button>
+												</div>
+											</div>
+											<ng-template #elseEditDireccion>{{ clienteInfo?.direccion }}</ng-template>
+											<span *ngxPermissionsOnly="['Administrador']"><button
+													*ngIf="clienteInfo?.direccion && !editInfo.direccion"
+													(click)="onEditInfo('direccion')"
+													class="btn-edit-info btn btn-xs btn-warning glyphicon glyphicon-pencil"></button></span>
+										</td>
+										<th *ngIf="cajaInfo?.saldo">Saldo Pendiente</th>
+										<td *ngIf="cajaInfo?.saldo">
+											<div class="col-sm-12 no-padding"
+												*ngIf="editInfo.saldo; else elseEditValor">
+												<div class="col-sm-10 no-padding">
+													<input [(ngModel)]="newInfo.saldo.value" type="text"
+														class="form-control" style="height: 27px">
+												</div>
+												<div class="col-sm-2" style="padding-left: 3px; padding-right: 0px">
+													<button (click)="onOkEditInfo('saldo')" type="button"
+														class="btn btn-xs btn-success glyphicon glyphicon-ok"></button>
+													<button (click)="onCancelEditInfo('saldo')" type="button"
+														class="btn btn-xs btn-danger glyphicon glyphicon-remove"></button>
+												</div>
+											</div>
+											<ng-template #elseEditValor>{{ cajaInfo?.saldo }}</ng-template>
+											<span *ngxPermissionsOnly="['Administrador']"><button
+													*ngIf="cajaInfo?.saldo && !editInfo.saldo"
+													(click)="onEditInfo('saldo')"
+													class="btn-edit-info btn btn-xs btn-warning glyphicon glyphicon-pencil"></button></span>
+										</td>
+									</tr>
+									<tr>
+										<th>Teléfono</th>
+										<td>
+											<div class="col-sm-12 no-padding"
+												*ngIf="editInfo.telefono; else elseEditTelefono">
+												<div class="col-sm-10 no-padding">
+													<input [(ngModel)]="newInfo.telefono.value" type="text"
+														class="form-control" style="height: 27px">
+												</div>
+												<div class="col-sm-2" style="padding-left: 3px; padding-right: 0px">
+													<button (click)="onOkEditInfo('telefono')" type="button"
+														class="btn btn-xs btn-success glyphicon glyphicon-ok"></button>
+													<button (click)="onCancelEditInfo('telefono')" type="button"
+														class="btn btn-xs btn-danger glyphicon glyphicon-remove"></button>
+												</div>
+											</div>
+											<ng-template #elseEditTelefono>{{ clienteInfo?.telefono }}</ng-template>
+											<span *ngxPermissionsOnly="['Administrador']"><button
+													*ngIf="clienteInfo?.telefono && !editInfo.telefono"
+													(click)="onEditInfo('telefono')"
+													class="btn-edit-info btn btn-xs btn-warning glyphicon glyphicon-pencil"></button></span>
+										</td>
+										<th *ngxPermissionsOnly="['Administrador']">Seña</th>
+										<td *ngxPermissionsOnly="['Administrador']">
+											<div class="col-sm-12 no-padding"
+												*ngIf="editInfo.senia; else elseEditSenia">
+												<div class="col-sm-10 no-padding">
+													<input [(ngModel)]="newInfo.senia.value" type="text"
+														class="form-control" style="height: 27px">
+												</div>
+												<div class="col-sm-2" style="padding-left: 3px; padding-right: 0px">
+													<button (click)="onOkEditInfo('senia')" type="button"
+														class="btn btn-xs btn-success glyphicon glyphicon-ok"></button>
+													<button (click)="onCancelEditInfo('senia')" type="button"
+														class="btn btn-xs btn-danger glyphicon glyphicon-remove"></button>
+												</div>
+											</div>
+											<ng-template #elseEditSenia>{{ proyectoInfo?.senia }}</ng-template>
+											<span *ngxPermissionsOnly="['Administrador']"><button
+													*ngIf="proyectoInfo?.senia && !editInfo.senia"
+													(click)="onEditInfo('senia')"
+													class="btn-edit-info btn btn-xs btn-warning glyphicon glyphicon-pencil"></button></span>
+										</td>
+									</tr>
+									<tr>
+										<th>Fecha de instalación</th>
+										<td>
+											<div class="col-sm-12 no-padding"
+												*ngIf="editInfo.instalacion_fecha; else elseEditFecha">
+												<div class="col-sm-10 no-padding">
+													<input [(ngModel)]="newInfo.instalacion_fecha.value" type="text"
+														class="form-control" style="height: 27px">
+												</div>
+												<div class="col-sm-2" style="padding-left: 3px; padding-right: 0px">
+													<button (click)="onOkEditInfo('instalacion_fecha')" type="button"
+														class="btn btn-xs btn-success glyphicon glyphicon-ok"></button>
+													<button (click)="onCancelEditInfo('instalacion_fecha')"
+														type="button"
+														class="btn btn-xs btn-danger glyphicon glyphicon-remove"></button>
+												</div>
+											</div>
+											<ng-template #elseEditFecha>{{ proyectoInfo?.instalacion_fecha }}
+											</ng-template>
+											<span *ngxPermissionsOnly="['Administrador']"><button
+													*ngIf="proyectoInfo?.instalacion_fecha && !editInfo.instalacion_fecha"
+													(click)="onEditInfo('instalacion_fecha')"
+													class="btn-edit-info btn btn-xs btn-warning glyphicon glyphicon-pencil"></button></span>
+										</td>
+										<th>Cantidad de Módulos</th>
+										<td>{{ proyectoInfo?.modulos.length }}</td>
+									</tr>
+									<tr>
+										<th>Comentario de instalación</th>
+										<td>
+											<div class="col-sm-12 no-padding"
+												*ngIf="editInfo.instalacion_comentario; else elseEditComentario">
+												<div class="col-sm-10 no-padding">
+													<input [(ngModel)]="newInfo.instalacion_comentario.value"
+														type="text" class="form-control" style="height: 27px">
+												</div>
+												<div class="col-sm-2" style="padding-left: 3px; padding-right: 0px">
+													<button (click)="onOkEditInfo('instalacion_comentario')"
+														type="button"
+														class="btn btn-xs btn-success glyphicon glyphicon-ok"></button>
+													<button (click)="onCancelEditInfo('instalacion_comentario')"
+														type="button"
+														class="btn btn-xs btn-danger glyphicon glyphicon-remove"></button>
+												</div>
+											</div>
+											<ng-template #elseEditComentario>{{ proyectoInfo?.instalacion_comentario }}
+											</ng-template>
+											<span *ngxPermissionsOnly="['Administrador']"><button
+													*ngIf="proyectoInfo?.instalacion_comentario && !editInfo.instalacion_comentario"
+													(click)="onEditInfo('instalacion_comentario')"
+													class="btn-edit-info btn btn-xs btn-warning glyphicon glyphicon-pencil"></button></span>
+										</td>
+										<th>Cantidad de cajones</th>
+										<td>{{ getModulosCajones().length }}</td>
+									</tr>
+									<tr>
+										<th>Comentario adicional</th>
+										<td colspan="3">
+											<div class="col-sm-12 no-padding"
+												*ngIf="editInfo.comentario_adicional; else elseEditComentarioAdicional">
+												<div class="col-sm-10 no-padding">
+													<textarea class="form-control"
+														[(ngModel)]="newInfo.comentario_adicional.value"></textarea>
+												</div>
+												<div class="col-sm-2" style="padding-left: 3px; padding-right: 0px">
+													<button (click)="onOkEditInfo('comentario_adicional')" type="button"
+														class="btn btn-xs btn-success glyphicon glyphicon-ok"></button>
+													<button (click)="onCancelEditInfo('comentario_adicional')"
+														type="button"
+														class="btn btn-xs btn-danger glyphicon glyphicon-remove"></button>
+												</div>
+											</div>
+											<ng-template #elseEditComentarioAdicional>
+												{{ proyectoInfo?.comentario_adicional }}</ng-template>
+											<span><button *ngIf="!editInfo.comentario_adicional"
+													(click)="onEditInfo('comentario_adicional')"
+													class="btn-edit-info btn btn-xs btn-warning glyphicon glyphicon-pencil"></button></span>
+										</td>
+									</tr>
+									<tr *ngIf="externalProjectLinks && externalProjectLinks.length > 0">
+										<th>Links externos</th>
+										<td colspan="3">
+											<ul>
+												<li *ngFor="let link of externalProjectLinks"><a target="_blank" style="cursor:pointer" (click)="openLink(link)">{{link}}</a></li>
+											</ul>
+										</td>
+									</tr>
+									<tr>
+										<th>Stock</th>
+										<td colspan="3">
+											<div class="progress">
+												<div class="progress-bar"
+													[ngStyle]="{'background-color': colorProgreso(totalEstadoOk(materialesDisenio)), 'width': totalEstadoOk(materialesDisenio) + '%', 'min-width': '2em'}"
+													role="progressbar">
+													{{ totalEstadoOk(materialesDisenio) }}%
+												</div>
+											</div>
+										</td>
+									</tr>
+									<tr>
+										<th>General</th>
+										<td colspan="3">
+											<div class="progress">
+												<div class="progress-bar"
+													[ngStyle]="{'background-color': colorProgreso(getProgresoGeneral()), 'width': getProgresoGeneral() + '%', 'min-width': '2em'}"
+													role="progressbar">
+													{{ getProgresoGeneral() }}%
+												</div>
+											</div>
+										</td>
+									</tr>
+									<tr>
+										<th>Cortes</th>
+										<td colspan="3">
+											<div class="progress">
+												<div class="progress-bar"
+													[ngStyle]="{'background-color': colorProgreso(totalEstadoOk(piezas)), 'width': totalEstadoOk(piezas) + '%', 'min-width': '2em'}"
+													role="progressbar">
+													{{ totalEstadoOk(piezas) }}%
+												</div>
+											</div>
+										</td>
+									</tr>
+									<tr>
+										<th>Tapacantos</th>
+										<td>
+											<div class="progress">
+												<div class="progress-bar"
+													[ngStyle]="{'background-color': colorProgreso((totalEstadoOkTapacantos()/wTapacantos()*100).toFixed(2)), 'width': (totalEstadoOkTapacantos()/wTapacantos()*100).toFixed(2) + '%', 'min-width': '2em'}"
+													role="progressbar">
+													{{ (totalEstadoOkTapacantos() === 0 && wTapacantos() === 0) ? 0 : (totalEstadoOkTapacantos()/wTapacantos()*100).toFixed(2) }}%
+												</div>
+											</div>
+										</td>
+										<th>Prearmados</th>
+										<td>
+											<div class="progress">
+												<div class="progress-bar"
+													[ngStyle]="{'background-color': colorProgreso(totalEstadoOk(piezas, 'prearmado_estado_id')), 'width': totalEstadoOk(piezas, 'prearmado_estado_id') + '%', 'min-width': '2em'}"
+													role="progressbar">
+													{{ totalEstadoOk(piezas, 'prearmado_estado_id') }}%
+												</div>
+											</div>
+										</td>
+									</tr>
+									<tr>
+										<th>Cajones</th>
+										<td>
+											<div *ngIf="getModulosCajones().length > 0; else elseCajonesGeneral"
+												class="progress">
+												<div class="progress-bar"
+													[ngStyle]="{'background-color': colorProgreso(totalEstadoOk(getModulosCajones('cajones'))), 'width': totalEstadoOk(getModulosCajones('cajones')) + '%', 'min-width': '2em'}"
+													role="progressbar">
+													{{ totalEstadoOk(getModulosCajones('cajones')) }}%
+												</div>
+											</div>
+											<ng-template #elseCajonesGeneral>
+												<span title="No posee cajones"><strong>N/A</strong></span>
+											</ng-template>
+										</td>
+										<th>Modulos</th>
+										<td>
+											<div class="progress">
+												<div class="progress-bar"
+													[ngStyle]="{'background-color': colorProgreso(totalEstadoOk(getModulosCajones('modulos'))), 'width': totalEstadoOk(getModulosCajones('modulos')) + '%', 'min-width': '2em'}"
+													role="progressbar">
+													{{ totalEstadoOk(getModulosCajones('modulos')) }}%
+												</div>
+											</div>
+										</td>
+									</tr>
+								</tbody>
+							</table>
+						</div>
+					</div>
+
+					<div id="cortes" class="tab-pane" role="tabpanel">
+						<div class="col-sm-12">
+							<div class="form-horizontal">
+								<div class="col-sm-5">
+									<label for="material" class="col-sm-3 control-label text-left">Material</label>
+									<div class="col-sm-9">
+										<select style="min-width:100px;" id="material" class="form-control"
+											name="material" [(ngModel)]="materialSelected"
+											(ngModelChange)="onChangeMaterial($event)">
+											<ng-container *ngFor="let material of materialesFiltered">
+												<option [value]="material.id">
+													{{ material.material }}
+												</option>
+											</ng-container>
+										</select>
+									</div>
+								</div>
+
+								<div class="col-sm-5">
+									<label for="filter-pieza" class="col-sm-2 control-label text-left">Filtrar</label>
+									<div class="col-sm-10">
+										<input id="filter-pieza" class="form-control" type="text" name="filter-pieza"
+											[ngModel]="filterPieza" (input)="onChangeFilterPieza($event.target.value)">
+									</div>
+								</div>
+
+								<div class="col-sm-2">
+									<button type="button" class="btn btn-primary"
+										(click)="modalOptimizar()">Optimizar</button>
+								</div>
+							</div>
+						</div>
+
+						<div class="col-sm-12">
+							<div class="form-horizontal">
+								<div class="col-sm-offset-1 col-sm-4 optimizar-todo-container">
+									<button type="button" class="btn btn-primary"
+									(click)="optimizarTodo()">Cambiar material faltante a Optimizar</button>
+								</div>
+								<div class="col-sm-5">
+									<label for="filter-lveta" class="col-sm-2 control-label text-left">LVeta</label>
+									<div class="col-sm-4">
+										<input id="filter-lveta" class="form-control" type="number" name="filter-lveta"
+											[ngModel]="filterLVeta" (input)="onChangeFilterLVeta($event.target.value)">
+									</div>
+
+									<label for="filter-aveta" class="col-sm-2 control-label text-left">AVeta</label>
+									<div class="col-sm-4">
+										<input id="filter-aveta" class="form-control" type="number" name="filter-aveta"
+											[ngModel]="filterAVeta" (input)="onChangeFilterAVeta($event.target.value)">
+									</div>
+								</div>
+								<div class="col-sm-2">
+								</div>
+							</div>
+						</div>
+
+						<div class="row table-responsive" style="width: 110%;    max-width: 1155px;">
+							<table class="table">
+								<thead>
+									<tr>
+										<th>#</th>
+										<th></th>
+										<th>Estado</th>
+										<th style="max-width: 65px">Cantidad</th>
+										<th>Pieza</th>
+										<th>Comentario</th>
+										<th>LVeta</th>
+										<th>AVeta</th>
+										<th>Módulo</th>
+										<th>Material</th>
+										<th>Espesor</th>
+										<th>Rotable</th>
+									</tr>
+								</thead>
+								<tbody>
+									<ng-container *ngFor="let pieza of piezas">
+										<tr *ngIf="pieza.show"
+											[ngStyle]="{'border-left': 'solid 5px' + colorEstado[pieza.estado.estado], 'background-color':colorEstadoBackground[pieza.estado.estado]}">
+											<td>{{ pieza.id_aux }}</td>
+											<td><button class="btn btn-xs btn-primary"
+													(click)="changeEstadoPieza(pieza, 3, 'estado_id')"
+													type="button">Cortar</button></td>
+											<td>
+												<select style="min-width:70px;max-width:70px;"
+													id="pieza-estado pz_estado" class="input-sm form-control"
+													name="pieza-estado"
+													(ngModelChange)="onChangeEstadoPieza($event, pieza, 'estado_id','corte')"
+													[(ngModel)]="pieza.estado_id">
+													<option *ngFor="let estado of estados" [value]="estado.id">
+														{{ estado.estado }}</option>
+												</select>
+											</td>
+											<td>{{ pieza.cantidad }}</td>
+											<td>{{ pieza.pieza }}</td>
+											<td><button *ngIf="pieza.comentario" type="button"
+													class="btn btn-xs btn-link btn-primary"
+													(click)="modalComentario($event, pieza.comentario)">Ver
+													info</button></td>
+											<td>{{ pieza.lveta }}</td>
+											<td>{{ pieza.aveta }}</td>
+											<td>{{ pieza.modulo.modulo }}</td>
+											<td>{{ pieza.material.material }}</td>
+											<td>{{ pieza.espesor }}</td>
+											<!-- <td><select style="min&#45;width:100px;" name="rotable" class='form&#45;control rotable'><option index=''>&#45;Seleccione&#45;</option><option index='YES'>SI</option><option index='NO'>NO</option></select> -->
+											<td><select [(ngModel)]="pieza.rotable"
+													style="min-width:70px;max-width:70px;" name="rotable"
+													class="input-sm form-control rotable">
+													<option index=''>-Seleccione-</option>
+													<option index='YES'>SI</option>
+													<option index='NO'>NO</option>
+												</select>
+											</td>
+											<td><button class="btn btn-xs btn-secondary" (click)="seeCalco(pieza)"
+													type="button">Ver calco</button></td>
+											<td><button class="btn btn-xs btn-secondary" (click)="printCalco(pieza)"
+													type="button">Imprimir</button></td>
+										</tr>
+									</ng-container>
+								</tbody>
+							</table>
+						</div>
+					</div>
+
+					<div id="stock" class="tab-pane" role="tabpanel">
+						<div class="">
+							<table class="table table-hover table-bordered materiales-table">
+								<thead>
+									<th class="cantidad-row">Cantidad</th>
+									<th class="cantidad-manual-row">Cantidad Manual</th>
+									<th class="nombre-row">Nombre</th>
+									<th class="detalle-row hide-sm">Detalle</th>
+									<th class="desperdicio desperdicio-row">Desperdicio (en cms)</th>
+									<th class="extra-1-row">Extra 1</th>
+									<th class="extra-2-row">Extra 2</th>
+									<th class="estado-row">Estado</th>
+								</thead>
+
+								<tbody>
+									<ng-container *ngIf="materialesDisenio.length">
+										<tr class="table-title-row"
+											*ngFor="let materiales of materialesDisenio; let i = index"
+											[ngStyle]="{'background-color': getStockTableRowBackgroundColor(materiales.estado_id)}">
+											<td>
+												<span
+													*ngIf="!getPlacas(materiales)">{{round(materiales.cantidad) + materiales.unidad}}</span>
+												<span *ngIf="getPlacas(materiales)">{{round(getPlacas(materiales))}}
+													placas</span>
+											</td>
+											<td>
+												{{materiales.cantidadManual}}
+											</td>
+											<td>
+												{{materiales.nombre}}
+											</td>
+											<td class="hide-sm">
+												{{materiales.detalle}}
+											</td>
+											<td>
+												{{materiales.desperdicio}}
+											</td>
+											<td>
+												{{materiales.extra1}}
+											</td>
+											<td>
+												{{materiales.extra2}}
+											</td>
+											<td>
+												<select class="form-control" [(ngModel)]="materiales.estado_id"
+													(ngModelChange)="onChangeMetadataMaterialEstado($event, materiales)">
+													<option value="9">Seleccione un estado</option>
+													<option value="3">Ok</option>
+													<option value="6">Stock</option>
+													<option value="4">Pedido</option>
+													<option value="1">Falta</option>
+												</select>
+											</td>
+										</tr>
+									</ng-container>
+									<tr *ngElse>
+										<td colspan="8" class="text-center"><strong>¡No existen materiales
+												registrados!</strong></td>
+									</tr>
+								</tbody>
+							</table>
+							<div class="muted waste-note">Se utilizo un desperdicio del <span
+									class="bold">{{waste}}%</span> para calcular la cantidad de placas</div>
+
+							<div class="metadata-container" *ngIf="modInfo.length">
+								<table
+									class="table-meta table table-hover table-bordered one-column modules-table col-sm-6 table-card-stock"
+									*ngFor="let mod of modInfo">
+									<tbody>
+										<tr class="table-title-row">
+											<td colspan="2" class="table-title">
+												{{mod.moduleName}}
+											</td>
+										</tr>
+										<tr>
+											<td class="row-label">Alto</td>
+											<td>{{mod.height}}</td>
+										</tr>
+										<tr>
+											<td class="row-label">Ancho</td>
+											<td>{{mod.width}}</td>
+										</tr>
+										<tr>
+											<td class="row-label">Armado</td>
+											<td>{{mod.armado ? mod.armado : 'No'}}</td>
+										</tr>
+										<tr *ngIf="!!mod.comentario">
+											<td class="row-label">Comentario</td>
+											<td>{{mod.comentario}} </td>
+										</tr>
+										<tr *ngIf="!!mod.descripcion">
+											<td class="row-label">Descripcion</td>
+											<td>{{mod.descripcion}} </td>
+										</tr>
+										<tr>
+											<td class="row-label">Material fondo</td>
+											<td>{{mod.materialFondo ? mod.materialFondo : 'Sin Fondo'}}</td>
+										</tr>
+										<tr>
+											<td class="row-label">Material por Defecto</td>
+											<td>{{mod.materialPorDefecto}}</td>
+										</tr>
+										<tr>
+											<td class="row-label">Tapacantos por Defecto</td>
+											<td>{{mod.tapacantosPorDefecto}}</td>
+										</tr>
+									</tbody>
+								</table>
+							</div>
+						</div>
+					</div>
+
+					<div id="tapacantos" class="tab-pane" role="tabpanel">
+						<div class="table-responsive">
+							<table class="table">
+								<thead>
+									<tr>
+										<th>#</th>
+										<th></th>
+										<th>Pieza</th>
+										<th>Material</th>
+										<th>Módulo</th>
+										<th>Completos</th>
+										<th>Comentario</th>
+									</tr>
+								</thead>
+								<tbody>
+									<ng-container *ngFor="let pieza of piezas; index as i">
+										<tr *ngIf="pieza.estado_id == 3"
+											[className]="classTapacantos(pieza.tapacantos, pieza)">
+											<td>{{ pieza.id_aux }}</td>
+											<td>
+												<button class="btn btn-primary"
+													(click)="(pieza.tapacantos.length === 0) ? onChangeEstadoPieza(3, pieza, 'tapacantos_estado_id', 'tapacantos') : terminarTodosLosTapacantos(pieza)"
+													type="button">Terminar</button>
+											</td>
+											<td>{{ pieza.pieza }}</td>
+											<td>{{ pieza.material.material }}</td>
+											<td>{{ pieza.modulo.modulo }}</td>
+											<td>
+												<button class="btn btn-primary"
+													[disabled]="pieza.tapacantos.length === 0"
+													(click)="changeTapacantos($event, pieza)">{{ tapacantosOk(pieza.tapacantos)+'/'+pieza.tapacantos.length }}</button>
+											</td>
+											<td><button *ngIf="pieza.comentario" type="button"
+													class="btn btn-link btn-primary"
+													(click)="modalComentario($event, pieza.comentario)">Ver
+													info</button></td>
+										</tr>
+									</ng-container>
+								</tbody>
+							</table>
+						</div>
+					</div>
+
+					<div id="prearmado" class="tab-pane" role="tabpanel">
+						<div>
+							<table class="table">
+								<thead>
+									<tr>
+										<th>#</th>
+										<th></th>
+										<th>Pieza</th>
+										<th>Material</th>
+										<th>Módulo</th>
+										<th>Estado</th>
+										<th>Comentario</th>
+									</tr>
+								</thead>
+								<tbody>
+									<ng-container *ngFor="let pieza of piezas; index as i">
+										<tr *ngIf="(pieza.estado_id == 3) && (((pieza.tapacantos.length > 0) && (tapacantosOk(pieza.tapacantos) == pieza.tapacantos.length)) || (pieza.tapacantos.length == 0))"
+											[ngStyle]="{'border-left': 'solid 5px' + colorEstado[pieza.prearmado.estado],'background-color':''+colorEstadoBackground[pieza.prearmado.estado]}">
+											<td>{{ pieza.id_aux }}</td>
+											<td><button class="btn btn-primary"
+													(click)="changeEstadoPieza(pieza, 3, 'prearmado_estado_id','prearmado')"
+													type="button">Prearmar</button></td>
+											<td>{{ pieza.pieza }}</td>
+											<td>{{ pieza.material.material }}</td>
+											<td>{{ pieza.modulo.modulo }}</td>
+											<td>
+												<select style="min-width:100px;" id="pieza-prearmado"
+													class="form-control" name="pieza-prearmado"
+													[(ngModel)]="pieza.prearmado_estado_id"
+													(ngModelChange)="onChangeEstadoPieza($event, pieza, 'prearmado_estado_id','prearmado')">
+													<option *ngFor="let estado of estados" [value]="estado.id">
+														{{ estado.estado }}</option>
+												</select>
+											</td>
+											<td><button *ngIf="pieza.comentario" type="button"
+													class="btn btn-link btn-primary"
+													(click)="modalComentario($event, pieza.comentario)">Ver
+													info</button></td>
+										</tr>
+									</ng-container>
+								</tbody>
+							</table>
+						</div>
+					</div>
+
+					<div id="modulos" class="tab-pane" role="tabpanel">
+						<div>
+							<table class="table">
+								<thead>
+									<tr>
+										<th>Módulo</th>
+										<th></th>
+										<th>Estado</th>
+										<th>Armar</th>
+										<th>Comentario</th>
+										<th>Descripcion</th>
+										<th>Piezas</th>
+									</tr>
+								</thead>
+								<tbody>
+									<ng-container *ngFor="let modulo of proyectoInfo?.modulos; let i = index">
+										<tr *ngIf="modulo.is_cajon == 0"
+											[ngStyle]="{'border-left': 'solid 5px' + colorEstado[modulo.estado.estado],'background-color':''+colorEstadoBackground[modulo.estado.estado]}">
+											<td>{{ modulo.modulo }}</td>
+											<td><button class="btn btn-primary"
+													(click)="changeEstadoModulo(modulo, 3, estado_id)"
+													type="button">Armar</button></td>
+											<td>
+												<select style="min-width:100px;" id="modulo-estado" class="form-control"
+													name="modulo-estado" [(ngModel)]="modulo.estado_id"
+													(ngModelChange)="onChangeEstadoModulo($event, modulo, i)">
+													<option *ngFor="let estado of estados" [value]="estado.id">
+														{{ estado.estado }}</option>
+												</select>
+											</td>
+											<td>{{ modulo.armado }}</td>
+											<td><button *ngIf="modulo.comentario" type="button"
+													class="btn btn-link btn-primary"
+													(click)="modalComentario($event, modulo.comentario)">Ver
+													info</button></td>
+											<td><button *ngIf="modulo.descripcion" type="button"
+													class="btn btn-link btn-primary"
+													(click)="modalComentario($event, modulo.descripcion)">Ver
+													info</button></td>
+											<td>
+												<button class="btn btn-primary"
+													(click)="showModalPiezas($event, modulo)">Piezas</button>
+											</td>
+										</tr>
+									</ng-container>
+								</tbody>
+							</table>
+						</div>
+					</div>
+
+					<div id="cajones" class="tab-pane" role="tabpanel">
+						<div>
+							<table class="table">
+								<thead>
+									<tr>
+										<th>#</th>
+										<th></th>
+										<th>Cajón</th>
+										<th>Módulo</th>
+										<th>Estado</th>
+										<th>Piezas</th>
+									</tr>
+								</thead>
+								<tbody>
+									<ng-container *ngIf="getModulosCajones().length > 0; else elseCajonesLength">
+										<ng-container *ngFor="let modulo of proyectoInfo?.modulos">
+											<tr *ngIf="modulo.is_cajon == 1"
+												[ngStyle]="{'border-left': 'solid 5px' + colorEstado[modulo.estado.estado],'background-color':''+colorEstadoBackground[modulo.estado.estado]}">
+												<td>{{ modulo.id_aux }}</td>
+												<td><button class="btn btn-primary"
+														(click)="changeEstadoModulo(modulo, 3, estado_id)"
+														type="button">Armar</button></td>
+												<td>{{ modulo.modulo }}</td>
+												<td>{{ modulo.modulo_parent.modulo }}</td>
+												<td>
+													<select style="min-width:100px;" id="modulo-estado"
+														class="form-control" name="modulo-estado"
+														[(ngModel)]="modulo.estado_id"
+														(ngModelChange)="onChangeEstadoModulo($event, modulo, i)">
+														<option *ngFor="let estado of estados" [value]="estado.id">
+															{{ estado.estado }}</option>
+													</select>
+												</td>
+												<td>
+													<button class="btn btn-primary"
+														(click)="showModalPiezas($event, modulo)">Piezas</button>
+												</td>
+											</tr>
+										</ng-container>
+									</ng-container>
+									<ng-template #elseCajonesLength>
+										<tr>
+											<td class="text-center" colspan="6"><strong>El proyecto no posee
+													cajones</strong></td>
+										</tr>
+									</ng-template>
+								</tbody>
+							</table>
+						</div>
+					</div>
+					<div id="encuesta" class="tab-pane" role="tabpanel">
+
+						<div class="alert alert-info" style="margin-top: 15px;;" role="alert">
+							<strong>¡Atención!</strong> Para finalizar el proyecto debe completar la encuesta sino
+							permancerá abierto.
+						</div>
+
+						<table class="table table-striped table-bordered ">
+							<thead>
+								<tr>
+									<th>Pregunta</th>
+									<th>Respuesta</th>
+								</tr>
+							</thead>
+							<tbody>
+								<tr *ngFor="let reporte of reportes; let i = index">
+									<td>{{ reporte.nombre }}</td>
+									<td *ngIf="reporte.esTexto"><textarea class="form-control"
+											[(ngModel)]="reporte.descripcion" placeholder="Describa aquí"
+											id="exampleFormControlTextarea1" rows="3"></textarea> </td>
+									<td *ngIf="reporte.esEstrella">
+
+										<ngb-rating [max]="5" [(rate)]="reporte.descripcion"
+											[(ngModel)]="reporte.descripcion">
+											<ng-template let-fill="fill" let-index="index">
+												<span class="star" [class.filled]="fill === 100">&#9733;</span>
+											</ng-template>
+										</ngb-rating>
+
+									</td>
+									<td *ngIf="reporte.esPregunta">
+
+										<div class="form-check form-check-inline">
+											<input class="form-check-input" type="radio"
+												[(ngModel)]="reporte.descripcion" name="inlineRadioOptions"
+												id="inlineRadio1" value="si">
+											<label class="form-check-label" for="inlineRadio1">Sí</label>
+
+											<input class="form-check-input" [(ngModel)]="reporte.descripcion"
+												style="margin-left: 15px;" type="radio" name="inlineRadioOptions"
+												id="inlineRadio2" value="no">
+											<label class="form-check-label" for="inlineRadio2">No</label>
+										</div>
+									</td>
+								</tr>
+							</tbody>
+						</table>
+						<div class="col-md-12" style="padding: 0;">
+							<button class="btn btn-success pull-right" (click)="enviarReporte()"> Enviar reporte
+							</button>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+
+	<div class="modal fade" id="change-tapacantos" role="dialog">
+		<div class="modal-dialog">
+			<div class="modal-content">
+				<div class="modal-header">
+					<button type="button" class="close" data-dismiss="modal">&times;</button>
+					<h4 class="modal-title">Tapacantos: </h4>
+				</div>
+
+				<div class="modal-body">
+					<table class="table">
+						<thead>
+							<tr>
+								<th>#</th>
+								<th>Posición</th>
+								<th>Nombre</th>
+								<th>Material</th>
+								<th>Estado</th>
+							</tr>
+						</thead>
+						<tbody>
+							<tr *ngFor="let tapacanto of tapacantos2Change; let i = index"
+								[ngStyle]="{'border-left': 'solid 5px' + colorEstado[tapacanto.estado.estado],'background-color':''+colorEstadoBackground[tapacanto.estado.estado]}">
+								<td>{{ tapacanto.id_aux }}</td>
+								<td>{{ tapacanto.posicion_tapacanto.posicion }}</td>
+								<td>{{ tapacanto.material.nombre }}</td>
+								<td>{{ tapacanto.material.material }}</td>
+								<td>
+									<select style="min-width:100px;" id="tapacanto-estado" class="form-control"
+										name="tapacanto-estado" [(ngModel)]="tapacanto.estado_id"
+										(ngModelChange)="onChangeEstadoTapacanto($event, tapacanto, i)">
+										<option *ngFor="let estado of estados" [value]="estado.id">{{ estado.estado }}
+										</option>
+									</select>
+								</td>
+								<td>
+							</tr>
+						</tbody>
+						<tfoot>
+							<tr>
+								<td colspan="3">¿Desea marcar todos los tapacantos Ok?</td>
+								<td colspan="1">
+									<button class="btn btn-primary" (click)="confirmationAllTapacantos.show()">Todos
+										OK</button>
+								</td>
+							</tr>
+						</tfoot>
+					</table>
+				</div>
+
+				<div class="modal-footer">
+					<button type="button" class="btn btn-default" data-dismiss="modal">Cerrar</button>
+				</div>
+			</div>
+		</div>
+	</div>
+
+	<div class="modal fade" id="list-piezas" role="dialog">
+		<div class="modal-dialog">
+			<div class="modal-content">
+				<div class="modal-header">
+					<button type="button" class="close" data-dismiss="modal">&times;</button>
+					<h4 class="modal-title">Piezas: </h4>
+				</div>
+
+				<div class="modal-body">
+					<table class="table" id="piezas_proyecto">
+						<thead>
+							<tr>
+								<th>#</th>
+								<th>Pieza</th>
+								<th>Material</th>
+								<th>Cantidad</th>
+								<th>LVeta</th>
+								<th>AVeta</th>
+								<th>Espesor</th>
+								<th>Estado</th>
+							</tr>
+						</thead>
+						<tbody>
+							<tr *ngFor="let pieza of getPiezasModulo(); let i = index">
+								<td>{{ pieza.id_aux }}</td>
+								<td>{{ pieza.pieza }}</td>
+								<td>{{ pieza.material.material }}</td>
+								<td>{{ pieza.cantidad }}</td>
+								<td>{{ pieza.lveta }}</td>
+								<td>{{ pieza.aveta }}</td>
+								<td>{{ pieza.espesor }}</td>
+								<td>{{ getEstado(pieza.estado_id) }}</td>
+							</tr>
+						</tbody>
+					</table>
+				</div>
+
+				<div class="modal-footer">
+					<button type="button" class="btn btn-default" data-dismiss="modal">Cerrar</button>
+				</div>
+			</div>
+		</div>
+	</div>
+
+	<div class="modal fade" id="modal-comentario" role="dialog">
+		<div class="modal-dialog">
+			<div class="modal-content">
+				<div class="modal-header">
+					<button type="button" class="close" data-dismiss="modal">&times;</button>
+					<h4 class="modal-title">Comentario sobre la pieza: </h4>
+				</div>
+
+				<div class="modal-body">
+					<p>{{ comentarioActual }}</p>
+				</div>
+
+				<div class="modal-footer">
+					<button type="button" class="btn btn-default" data-dismiss="modal">Cerrar</button>
+				</div>
+			</div>
+		</div>
+	</div>
+
+	<!-- Modal Para crear la Optimizacion -->
+	<div class="modal fade" id="modal_optimizacion" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
+		aria-hidden="true">
+		<div class="modal-dialog" role="document" style="width: 80% !important;">
+			<div class="modal-content">
+				<div class="modal-header">
+					<h5 class="modal-title" id="exampleModalLabel">PARAMETROS OPTIMIZACION</h5>
+					<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+						<span aria-hidden="true">&times;</span>
+					</button>
+				</div>
+
+				<div class="modal-body">
+					<div class="row">
+						<div class="col-xs-6 col-md-offset-3">
+							<div class="panel panel-default">
+								<div class="panel-heading">
+									<h3 class="panel-title">Opciones de Rotacion de las Piezas</h3>
+								</div>
+								<div class="panel-body">
+									<!--Radio group-->
+									<label class="radio-inline" title="Rotar Todas Las Piezas">
+										<input type="radio" value="todas" [(ngModel)]="rotacion" name="rotacion">Todas
+									</label>&nbsp;&nbsp;&nbsp;
+									<label class="radio-inline" title="No Rotar Ninguna Pieza">
+										<input type="radio" value="ninguna" [(ngModel)]="rotacion"
+											name="rotacion">Ninguna
+									</label>&nbsp;&nbsp;&nbsp;
+									<label class="radio-inline" title="Rotar Solo Las Piezas Seleccionadas">
+										<input type="radio" value="seleccionadas" [(ngModel)]="rotacion" name="rotacion"
+											checked="checked">Seleccionadas
+									</label>
+									<!--Radio group-->
+								</div>
+							</div>
+
+						</div>
+					</div>
+
+					<form class="form-horizontal">
+						<table class="table">
+							<tr>
+								<th>Nombre</th>
+								<th>Largo[mm]</th>
+								<th>Ancho[mm]</th>
+								<th>Cantidad</th>
+								<th>Accion</th>
+							</tr>
+							<tr>
+								<td><input [(ngModel)]="newPanel.nombre" style="width: 100%;" type="text" name="nombre"
+										class="input-sm"></td>
+								<td><input [(ngModel)]="newPanel.largo" style="width: 80px;" type="text" name="largo"
+										class="input-sm"></td>
+								<td><input [(ngModel)]="newPanel.ancho" style="width: 80px;" type="text" name="ancho"
+										class="input-sm"></td>
+								<td><input [(ngModel)]="newPanel.cantidad" style="width: 80px;" type="number"
+										name="cantidad" class="input-sm"></td>
+								<td><button (click)="addPanel()" title="Agregar Panel"
+										class="btn btn-success btn-sm glyphicons glyphicons-plus-add"
+										type="button">add</button></td>
+							</tr>
+							<tr *ngFor="let panel of data.panels; index as id">
+								<td>{{ panel.nombre }}</td>
+								<td>{{ panel.largo }}</td>
+								<td>{{ panel.ancho }}</td>
+								<td>{{ panel.cantidad }}</td>
+								<td><span title="Quitar Panel" class="cancel-panel" (click)="removePanel(id)">❌</span>
+								</td>
+							</tr>
+
+						</table>
+						<p style="text-align: center; color: tomato;" *ngIf="!data.panels.length">No ha Agregado NIngun
+							Panel</p>
+
+						<div class="row" style="text-align: right;">
+							<hr>
+
+							<div class="form-group" style="padding-bottom: 2px;">
+								<label for="nombre_proyecto" class="col-form-label col-sm-2 col-md-offset-2">Nombre
+									Proyecto:</label>
+								<div class="col-sm-6">
+									<input type="text" class="form-control" name="nombre_proyecto" id="nombre_proyecto"
+										[(ngModel)]="data.infoProject.projectName">
+								</div>
+							</div>
+
+							<div class=" form-group" style="padding-bottom: 2px;">
+								<label for="saw_kert" class="col-form-label col-sm-2 col-md-offset-2">Saw Kert:</label>
+								<div class="col-sm-6">
+									<input type="text" class="form-control" name="saw_kert" id="saw_kert"
+										[(ngModel)]="data.infoProject.sawKerf">
+								</div>
+							</div>
+
+							<div class=" form-group">
+								<label for="trim" class="col-form-label col-sm-2 col-md-offset-2">Trim:</label>
+								<div class="col-sm-6">
+									<input type="text" class="form-control" name="trim" id="trim"
+										[(ngModel)]="data.infoProject.trim">
+								</div>
+							</div>
+
+							<div class=" form-group">
+								<label for="trim" class="col-form-label col-sm-2 col-md-offset-2">Cut Level:</label>
+								<div class="col-sm-6">
+									<select id="cut_level" class="form-control" name="cut_level"
+										[(ngModel)]="data.infoProject.cut_level" (ngModelChange)="onChangeCut($event)">
+										<option value="0">-Seleccione--</option>
+										<option value="2">XY-Cut (Level 2)</option>
+										<option value="3">Two-Stage XY (Level 3)</option>
+										<option value="4">XYZ-cut (Level 4)</option>
+										<option value="5">XYZW-cut (Level 5)</option>
+										<option value="5">Standard-cut (Level 6)</option>
+									</select>
+								</div>
+							</div>
+						</div>
+					</form>
+					<div class="text-center">
+						<p *ngIf="inProgress"><b>Optimizando. Por favor espere unos segundos...</b></p>
+						<div *ngIf="optimalonError">
+							<p class="error-font">Se ha producido el siguiente error en Optimalon:</p>
+							<div class="optimalon-error" [innerHTML]="optimalonError"></div>
+						</div>	
+						<div *ngIf="optimizado">
+							<button type="button" (click)="verOptimizacion()"
+								class="btn btn-primary glyphicon glyphicon-eye-open">
+								Ver Optimizacion
+							</button>
+							<button type="button" (click)="download_pdf()" class="glyphicon glyphicon-download-alt
+							btn btn-primary">
+
+								Descargar PDF
+							</button>
+						</div>
+					</div>
+
+
+				</div>
+				<div class="modal-footer">
+					<button type="button" class="btn btn-secondary" data-dismiss="modal">Cancelar</button>
+					<button type="button" (click)="enviarOptimizacion()" *ngIf="this.data.panels.length"
+						class="btn btn-primary">Optimizar</button>
+				</div>
+				<app-pdf-viewer></app-pdf-viewer>
+			</div>
+		</div>
+	</div>
+	<!-- end Modal Para crear la Optimizacion -->
+
+		<!-- Modal detalle pago -->
+	<div class="modal fade" id="modal-detalle-pago" tabindex="-1" role="dialog" aria-hidden="true">
+		<div class="modal-dialog" style="width: 50% !important;" role="document">
+			<div class="modal-content">
+				<div class="modal-body">
+					<div>
+						<h4>Detalle</h4>
+						<div class="detalle-grid">
+							<div class="labels">
+								<div>Cantidad de items:<span class="values">{{cajaInfo?.items.length}}</span></div>
+								<div>Total:<span class="values" *ngIf="cajaInfo?.total">${{cajaInfo.total | number}}</span><span class="values" *ngIf="cajaInfo?.totalDescripcion">({{cajaInfo?.totalDescripcion}})</span></div>
+								<div>Saldo:<span class="values" *ngIf="cajaInfo?.saldo">${{cajaInfo.saldo | number}}</span></div>
+								<div>Seña:<span class="values" *ngIf="cajaInfo?.senia">${{cajaInfo.senia | number}} <span class="values" *ngIf="cajaInfo?.seniaDescripcion">({{cajaInfo?.seniaDescripcion}})</span></span></div>
+							</div>
+						</div>
+					</div>
+					<div class="items-table">
+						<h4>Items</h4>
+						<table class="table">
+							<thead>
+								<tr>
+									<th>Item</th>
+									<th>Valor</th>
+									<th>Creado por</th>
+									<th>Fecha</th>
+								</tr>
+		
+							</thead>
+							<tbody>
+								<tr *ngFor="let item of cajaInfo?.items">
+									<td>{{item.descripcion}}</td>
+									<td>${{item.monto | number}}</td>
+									<td>{{item.createdBy}}</td>
+									<td>{{item.date | date}}</td>
+								</tr>
+							</tbody>
+							<tfoot>
+								<tr>
+								  <td class="table-total">Total</td>
+								  <td class="table-total" colspan="3" *ngIf="cajaInfo?.total">${{cajaInfo.total | number}}</td>
+								</tr>
+							</tfoot>
+						</table>
+					</div>
+					<div class="pagos-table">
+						<h4>Pagos</h4>
+						<table class="table">
+							<thead>
+								<tr>
+									<th>Tipo</th>
+									<th>Descripction</th>
+									<th>Monto</th>
+									<th>Creado por</th>
+									<th>Fecha</th>
+								</tr>
+		
+							</thead>
+							<tbody>
+								<tr *ngFor="let pago of cajaInfo?.pagos">
+									<td *ngIf="pago.tipo !== -1">{{pago.tipo}}</td>
+									<td *ngIf="pago.tipo === -1">Otro <span *ngIf="pago.tipoPago">: {{pago.tipoPago}}</span> </td>
+									<td>{{pago.descripcion}}</td>
+									<td>${{pago.monto | number}}</td>
+									<td>{{pago.createdBy}}</td>
+									<td>{{pago.date | date}}</td>
+								</tr>
+							</tbody>
+						</table>
+					</div>
+				</div>
+				<div class="modal-footer">
+					<button type="button" class="btn btn-primary" data-dismiss="modal">Cerrar</button>
+				  </div>
+			</div>
+		</div>
+
+	</div>
+	<!-- end Modal detalle pago -->
+
+</div>
+
+<app-image-gallery></app-image-gallery>
+
+<!-- <!&#45;&#45; Image Folder Link &#45;&#45;> -->
+<!-- <a *ngIf="selectedClient?" (click)="viewGallery()">Ver Carpeta de Imágenes</a> -->
+<!--  -->
+<!-- <!&#45;&#45; Optimization Button &#45;&#45;> -->
+<!-- <a *ngIf="selectedClient?" (click)="optimize()">Optimizar</a> -->
+<!--  -->
+<!-- <a *ngIf="selectedClient?" (click)="reload()">Recargar</a> -->
+
+<!-- <app&#45;image&#45;gallery></app&#45;image&#45;gallery> -->
+
+<!-- <app&#45;tabla&#45;material></app&#45;tabla&#45;material> -->
+
+<!-- <app&#45;modal&#45;alert></app&#45;modal&#45;alert> -->
+
+<!-- <app&#45;modal&#45;select (onSelected)="onSelectedElement($event)"></app&#45;modal&#45;select> -->
+
+<!-- <app&#45;modal&#45;optimize></app&#45;modal&#45;optimize> -->

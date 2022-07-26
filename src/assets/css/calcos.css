@@ -1,0 +1,176 @@
+.calco-view td {
+    font-size: 11px;
+    text-align: center;
+}
+.calco-view .short-1 {
+    min-width: 30px;
+    max-width: 40px;
+}
+.calco-view .short-2 {
+    min-width: 60px;
+    max-width: 60px;
+}
+.calco-view .short-2.separator-name {
+    min-width: 91px;
+    max-width: 91px;
+}
+.calco-view .short-4 {
+    min-width: 120px;
+    max-width: 120px;
+}
+.calco-view .short-6 {
+    min-width: 180px;
+    max-width: 180px;
+}
+.calco-view .table-calco {
+    min-width: 240px;
+    max-width: 240px;
+    font-size: 9px;
+}
+.calco-view .container-calco {
+    display: inline-block;
+    vertical-align: top;
+}
+.calco-view .tapacanto {
+    vertical-align: middle;
+    word-break: keep-all;
+}
+.calco-view .padding {
+    padding-right: 5px;
+}
+.calco-view .green {
+    background-color: lightgreen;
+}
+.calco-view .grey {
+    background-color: lightgray;
+}
+.calco-view .orange {
+    background-color: orange;
+}
+.calco-view .page-break {
+    padding-top: 20px;
+}
+.module-sketch {
+    display: flex;
+    flex-wrap: wrap;
+    width: 125px;
+    padding-top: 5px;
+    margin: 0 auto;
+}
+.module-sketch .regular {
+    width: 50px;
+    height: 50px;
+}
+.module-sketch .slim {
+    width: 25px;
+    height: 50px;
+}
+.module-sketch .slim.upper {
+    border-bottom: 1px solid black;
+}
+.module-sketch .slim.down {
+    position: relative;
+}
+.module-sketch .slim.down span {
+    position: absolute;
+    top: 50px;
+    left: 0px;
+}
+.module-sketch .down {
+    border-bottom: 1px solid black;
+}
+.module-sketch .down.right {
+    border-right: 1px solid black;
+    position: relative;
+}
+.module-sketch .down.right span {
+    position: absolute;
+    left: 55px;
+}
+.module-sketch .down.right.izquierdo span {
+    top: 15px;
+}
+.module-sketch .down.left {
+    border-left: 1px solid black;
+    position: relative;
+}
+.module-sketch .down.left span {
+    position: absolute;
+    left: -45px;
+    top: 15px;
+}
+.module-sketch .upper.derecho.right {
+    border-right: 1px solid black;
+    border-left: 1px solid black;
+    border-top: 1px solid black;
+}
+.module-sketch .upper.derecho.left {
+    border-bottom: 1px solid black;
+}
+.module-sketch .upper.izquierdo.right {
+    border-bottom: 1px solid black;
+}
+.module-sketch .upper.izquierdo.left {
+    border-right: 1px solid black;
+    border-left: 1px solid black;
+    border-top: 1px solid black;
+}
+.door-sketch {
+    width: 98px;
+    height: 98px;
+    border: 1px solid black;
+    margin: 0 auto;
+    margin-top: 10px;
+    display: flex;
+    justify-content: center;
+  }
+  .bisagra {
+    width: 7px;
+    height: 7px;
+    background-color: #8BC34A;
+  }
+  .bisagra-position {
+    position: relative;
+    display: inline-block;
+    left: 8px;
+    bottom: 5px;
+  }
+  [class="Izquierda/Derecha"] .bisagra-position {
+    left: 10px;
+    bottom: 5px;
+  }
+  .Inferior .bisagra-position {
+    transform: rotate(310deg);
+    left: -5px;
+    bottom: 24px;
+  }
+  .Superior .bisagra-position {
+    transform: rotate(310deg);
+    left: -25px;
+    top: 15px;
+  }
+  .Derecha .bisagra-position {
+    left: 8px;
+    bottom: 5px;
+  }
+  .Izquierda .bisagra-position {
+    right: 36px;
+    bottom: 5px;
+  }
+@media print {
+	.calco-view .page-break { display: block; page-break-before: always; }
+    .calco-view .table-bordered, .calco-view .table-bordered td { border-width: 2px !important; border-color: black !important; }
+    /* Fix para impresion a color */
+    .calco-view .green {
+        background-color: rgb(248, 132, 132) !important;
+        -webkit-print-color-adjust: exact !important;
+    }
+    .calco-view .grey {
+        background-color: rgb(248, 132, 132) !important;
+        -webkit-print-color-adjust: exact !important;
+    }
+    .calco-view .orange {
+        background-color: rgb(248, 132, 132) !important;
+        -webkit-print-color-adjust: exact !important;
+    }
+}

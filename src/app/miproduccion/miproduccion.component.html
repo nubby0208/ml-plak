@@ -1,0 +1,248 @@
+<div class="container-fluid">
+
+  <div class="col-sm-12 text-center">
+	<h2>Mi Produccion</h2>
+	<hr>
+  </div>
+<div class="row">
+<div class="col-sm-12">
+  <div class="table-responsive">
+	<table class="table table-hover table-bordered" style="border: none;" *ngIf="mispuntos">
+		<thead>
+			<tr class="success">
+				<th>Nombre</th>
+				<th>T<span class="hidden-xs">otal Piezas</span><span class="visible-xs-inline">. Pzs.</span></th>
+				<th>T<span class="hidden-xs">otal Puntos</span><span class="visible-xs-inline">. Pts.</span></th>
+				<th>Prom<span class="hidden-xs">edio de Produccion</span><span class="visible-xs-inline">.</span></th>
+				<th>Horas</th>
+			</tr>
+		</thead>
+		<tbody>
+			<tr>
+				<td>Mi día</td>
+				<td *ngIf="mispuntos.hoy">{{mispuntos.hoy.piezas}}</td>
+				<td *ngIf="mispuntos.hoy">{{mispuntos.hoy.puntos}}</td>
+				<td *ngIf="mispuntos.hoy">{{(mispuntos.hoy.puntos/((mispuntos.horas_hoy_total>0) ? mispuntos.horas_hoy_total : 1)).toFixed(2)}}</td>
+				<td *ngIf="mispuntos">{{mispuntos.horas_hoy}}</td>
+			</tr>
+			<tr>
+				<td>Mi Semana</td>
+				<td *ngIf="mispuntos.piezas_semana >= 0">{{mispuntos.piezas_semana}}</td>
+				<td *ngIf="mispuntos.semana_puntos >= 0">{{mispuntos.semana_puntos}}</td>
+				<td *ngIf="mispuntos.total_horas_semana >= 0">{{(mispuntos.semana_puntos/((mispuntos.total_horas_semana>0) ? mispuntos.total_horas_semana : 1)).toFixed(2)}}</td>
+				<td *ngIf="mispuntos.total_horas_semana >= 0">{{mispuntos.total_horas_semana}}</td>
+			</tr>
+			<tr>
+				<td>Mi Mejor mes</td>
+				<td *ngIf="mispuntos.mejor_mes">{{mispuntos.mejor_mes.piezas}}</td>
+				<td *ngIf="mispuntos.mejor_mes">{{mispuntos.mejor_mes.puntos}}</td>
+				<td *ngIf="mispuntos.mejor_mes">{{(mispuntos.mejor_mes.puntos/((mispuntos.mejor_mes.horas_total>0)?mispuntos.mejor_mes.horas_total:1)).toFixed(2)}}</td>
+				<td *ngIf="mispuntos.mejor_mes">{{mispuntos.mejor_mes.horas}}</td>
+
+			</tr>
+			<tr>
+				<td>Mes Actual</td>
+				<td *ngIf="mispuntos.estemes">{{mispuntos.estemes.piezas}}</td>
+				<td *ngIf="mispuntos.estemes">{{mispuntos.estemes.puntos}}</td>
+				<td *ngIf="mispuntos.estemes">{{(mispuntos.estemes.puntos/((mispuntos.horas_mes_total>0) ? mispuntos.horas_mes_total : 1 )).toFixed(2)}}</td>
+				<td *ngIf="mispuntos">{{mispuntos.horas_mes}}</td>
+			</tr>
+			<tr>
+				<td>
+					<input type="text" class="form-control miprod" daterangepicker [options]="{'singleDatePicker': true, locale: { format: 'YYYY-MM'}}" (selected)="selectedDate($event)"
+					(applyDaterangepicker)="calendarApplied($event)">
+				</td>
+				<td *ngIf="mispuntosmes">{{mispuntosmes.piezas}}</td>
+				<td *ngIf="mispuntosmes">{{mispuntosmes.puntos}}</td>
+				<td *ngIf="mispuntosmes">{{(mispuntosmes.puntos/((mispuntosmes.horas_total>0) ? mispuntosmes.horas_total : 1)).toFixed(2)}}</td>
+				<td *ngIf="mispuntosmes">{{mispuntosmes.horas}}</td>
+			</tr>
+			<tr>
+				<td><input class="form-control" type="date" name="date" [(ngModel)]="fecha" (applyDaterangepicker)="calendarAppliedProd($event)"></td>
+				<td *ngIf="mispuntosfecha">{{mispuntosfecha.piezas}}</td>
+				<td *ngIf="mispuntosfecha">{{mispuntosfecha.puntos}}</td>
+				<td *ngIf="mispuntosfecha">{{(mispuntosfecha.puntos/((mispuntosfecha.horas_total>0) ? mispuntosfecha.horas_total : 1)).toFixed(2)}}</td>
+				<td *ngIf="mispuntosfecha">{{mispuntosfecha.horas}}</td>
+			</tr>
+		</tbody>
+	</table>
+  </div>
+
+  <div class="form-group">
+    <label class="control-label" for="inputSuccess2">Mes a visualizar</label>
+	<input type="text" class="form-control miprod" daterangepicker [options]="{'singleDatePicker': true, locale: { format: 'YYYY-MM'}}" (selected)="selectedDateProd($event)"
+	(applyDaterangepicker)="calendarAppliedProd($event)">
+  </div>
+  <div class="form-group" *ngIf="mispuntos.puntos_por_usuario">
+    <label class="control-label" for="inputSuccess2">Numero de posiciones</label>
+    <select class="form-control" name="usuario" [(ngModel)]="limit" (change)="getPuntos()">
+      <option *ngFor="let limitValue of limits" [value]="limitValue">{{ limitValue }}</option>
+    </select>
+  </div>
+
+  <div class="table-responsive">
+	<table class="table table-hover table-bordered" *ngIf="mispuntos.puntos_por_usuario">
+	  <tr>
+	    <th class="primary text-center" colspan="5">Posiciones por promedio de produccion</th>
+	  </tr>
+	  <tr>
+	    <td></td>
+		<td></td>
+		<td>Puntos</td>
+		<td>Horas</td>
+	    <td>Producion por hora(promedio)</td>
+	</tr>
+		<tr *ngFor="let punto of mispuntos.promedios_por_usuario; let i = index">
+				<td>{{i+1}}</td>
+				<td *ngIf="punto.usuario.usuario==null&&punto.usuario.usuario_id==null&&punto.usuario.puntos==null" colspan="3">No hay resultados</td>
+				<td>{{punto.usuario.usuario}}</td>
+				<td>{{punto.puntos}}</td>
+				<td>{{punto.horas_total}}</td>
+				<td>{{(punto.promedio).toFixed(2)}} P/h</td>
+    	</tr>
+	</table>
+   </div>
+
+	<div class="table-responsive">
+	<table class="table table-hover table-bordered" *ngIf="mispuntos.puntos_por_usuario">
+	  <tr>
+	    <th class="info text-center" colspan="3">Posiciones por produccion neta</th>
+	  </tr>
+	  <tr>
+	    <td></td>
+	    <td></td>
+	    <td>Total de produccion mensual(total)</td>
+	  </tr>
+		<tr *ngFor="let punto of mispuntos.puntos_por_usuario.puntos; let i = index">
+			<td>{{i+1}}</td>
+			<td>{{punto.usuario.usuario}}</td>
+			<td>{{punto.puntos}}</td>
+		</tr>
+	</table>
+	</div>
+
+ </div>
+
+
+<div *ngIf="is_admin=='Administrador'" class="col-sm-12">
+<h2>Configuracion de los Valores</h2>
+ <div class="table-responsive" *ngIf="niveles.length">
+	<table *ngFor="let nivel of niveles; let i = index" class="table table-hover table-bordered">
+	  <tr class="info text-center" *ngIf="nivel[i].tipo=='complejidad'">
+	    <th colspan="2">Valores de complejidad</th>
+	    <th colspan="2">Etapa: {{nivel[i].etapa}}</th>
+	  </tr>
+
+	  <tr>
+	    <td *ngIf="nivel[i].tipo">{{nivel[i].tipo}}</td>
+	    <td>min</td>
+	    <td>max</td>
+	    <td><span class="hidden-xs">Puntos</span><span class="visible-xs-inline">Pts.</span></td>
+	    <td>Acciones</td>
+	  </tr>
+	  <tr *ngFor="let niv of nivel">
+	    <td>{{niv.nivel}}</td>
+	    <td>{{niv.min}}</td>
+	    <td>{{niv.max}}</td>
+	    <td>{{niv.puntos}}</td>
+	    <td><button class="btn btn-primary" (click)="changeConfig($event,niv)">editar</button></td>
+	  </tr>
+
+	</table>
+	</div>
+
+<div class="table-responsive">
+	<table class="table table-hover table-bordered">
+	  <tr class="success">
+	  	<th colspan="2">{{cajones.tipo}}</th>
+	    <th colspan="2">{{cajones.etapa}}</th>
+	  </tr>
+	  <tr>
+	    <td>{{cajones.tipo}}</td>
+	    <td></td>
+	    <td></td>
+	    <td><span class="hidden-xs">Puntos</span><span class="visible-xs-inline">Pts.</span></td>
+	    <td>Acciones</td>
+	  </tr>
+	  <tr>
+	    <td>X cada cajon</td>
+	    <td></td>
+	    <td></td>
+	    <td>{{cajones.puntos}}</td>
+	    <td><button class="btn btn-primary" (click)="changeConfig($event,cajones)">editar</button></td>
+	  </tr>
+
+	</table>
+</div>
+
+<div class="table-responsive" *ngIf="modulos.length">
+	<table class="table table-hover table-bordered">
+	  <tr class="info text-center">
+	    <th colspan="4">Armado de modulos</th>
+	  </tr>
+
+	  <tr>
+	    <td>Armado de modulos</td>
+	    <td></td>
+	    <td></td>
+	    <td><span class="hidden-xs">Puntos</span><span class="visible-xs-inline">Pts.</span></td>
+	    <td>Acciones</td>
+	  </tr>
+	  <tr *ngFor="let niv of modulos">
+	  	<td>{{niv.nivel}}</td>
+	    <td></td>
+	    <td>divide por</td>
+	    <td>{{niv.puntos}}</td>
+	    <td><button class="btn btn-primary" (click)="changeConfig($event,niv)">editar</button></td>
+	  </tr>
+
+	</table>
+	</div>
+</div>
+
+
+ </div>
+
+</div>
+
+<div class="modal fade" id="change-config" role="dialog">
+		<div class="modal-dialog">
+			<div class="modal-content">
+				<div class="modal-header">
+					<button type="button" class="close" data-dismiss="modal">&times;</button>
+					<h4 class="modal-title">Niveles de complejidad: </h4>
+				</div>
+
+				<div class="modal-body">
+
+					<p *ngIf="config2Change">Etapa: {{config2Change.etapa}},
+					<span *ngIf="config2Change.nivel">Nivel: {{config2Change.nivel}}</span></p>
+					<div *ngIf="config2Change">
+					<div *ngIf="config2Change.tipo == 'complejidad'">
+					  <div class="form-group">
+					  	<label>Minimo</label>
+					  	<input class="form-control" type="text" name="min" [(ngModel)]="config2Change.min">
+					  </div>
+
+					  <div class="form-group">
+						<label>Maximo</label>
+						<input class="form-control" type="text" name="max" [(ngModel)]="config2Change.max">
+					  </div>
+					</div>
+					<div class="form-group" *ngIf="config2Change">
+						<label>Puntos</label>
+						<input class="form-control" type="text" name="puntos" [(ngModel)]="config2Change.puntos">
+				    </div>
+					</div>
+					<div>
+						<button type="button" class="btn btn-primary" data-dismiss="modal" (click)="onChangeConfig(config2Change)">Actualizar</button>
+					</div>
+
+				</div>
+
+				<div class="modal-footer">
+					<button type="button" class="btn btn-default" data-dismiss="modal">Cerrar</button>
+				</div>
+			</div>
+		</div>
+	</div>

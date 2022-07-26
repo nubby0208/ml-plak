@@ -1,0 +1,219 @@
+<div id="app-respaldo-list" class="container-fluid">
+  <div class="col-xs-12 col-md-12 col-lg-6">
+    <div class="col-sm-12 text-center">
+      <h2>
+        Listado de reportes
+
+        <button type="button" class="btn btn-xs btn-success" (click)="modalReporte()">
+          <span class="glyphicon glyphicon-plus"></span>
+          Nuevo
+        </button>
+
+      </h2>
+      <hr>
+    </div>
+
+    <div id="respaldo-listado" class="col-sm-12">
+
+      <ngx-datatable #tablaReportes class="bootstrap" [footerHeight]="50" [columnMode]="'force'" [rows]="reportes"
+        [scrollbarH]="true"  [messages]="{emptyMessage: 'No hay reportes creados'}" [footerHeight]="50"
+        [limit]="10" [headerHeight]="50" rowHeight="auto">
+        <ngx-datatable-column name="Descrición reporte">
+          <ng-template let-row="row" style="border-left: 1px solid #d1d4d7;" ngx-datatable-cell-template>
+            <strong class="salto-linea"> {{ row.nombre }} </strong>
+          </ng-template>
+        </ngx-datatable-column>
+        <ngx-datatable-column name="Tipo de reporte">
+          <ng-template let-row="row" style="border-left: 1px solid #d1d4d7;" ngx-datatable-cell-template>
+            <span
+              class="badge badge-success">{{row.esPregunta ? 'Pregunta' : row.esTexto ? 'Campo de texto' : 'Calificación'}}
+            </span>
+          </ng-template>
+        </ngx-datatable-column>
+        <ngx-datatable-column name="Estado">
+          <ng-template let-row="row" style="border-left: 1px solid #d1d4d7;" ngx-datatable-cell-template>
+            <span class="badge" (click)="cambiarEstado(row)"
+              [ngClass]="row.estado ? 'badge-success' : 'badge-danger'">{{row.estado ? 'Activo' : 'Inactivo'}}
+            </span>
+          </ng-template>
+        </ngx-datatable-column>
+        <ngx-datatable-column name="Editar">
+          <ng-template let-row="row" style="border-left: 1px solid #d1d4d7;" ngx-datatable-cell-template>
+            <button class="btn btn-sm btn-info" (click)="seleccionarEncuesta(row)">
+              <span class="fa fa-edit"></span>
+            </button>
+          </ng-template>
+        </ngx-datatable-column>
+      </ngx-datatable>
+    </div>
+
+    <div id="modal-reporte" class="modal fade" tabindex="-1">
+      <div class="modal-dialog">
+        <div class="modal-content">
+          <div class="modal-header">
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span
+                aria-hidden="true">&times;</span></button>
+            <h4 class="modal-title">Reportes</h4>
+          </div>
+          <div class="modal-body">
+            <div id="app-grupo-form" class="container-fluid">
+              <div id="" class="col-sm-12">
+                <form id="form-grupo" class="form-horizontal" action="#!" method="post">
+                  <div class="form-group">
+                    <label class="control-label col-sm-4" for="reporte">Descripción reporte</label>
+                    <div class="col-sm-8">
+                      <textarea id="reporte" placeholder="Describa aquí la pregunta del reporte"
+                        class="form-control salto-linea" name="reporte" type="text"
+                        [(ngModel)]="encuesta.nombre "></textarea>
+                    </div>
+                  </div>
+
+                  <div class="form-group">
+                    <label class="control-label col-sm-4" for="reporte">Tipo reporte</label>
+                    <div class="col-sm-8">
+                      <ng-select [items]="tipo_encuesta" [disabled]="idTipoEncuesta != null"
+                        placeholder="Seleccione el tipo de reporte" bindLabel="descripcion" name="idTipoEncuesta"
+                        [(ngModel)]="idTipoEncuesta" bindValue="id">
+                      </ng-select>
+
+                    </div>
+                  </div>
+                </form>
+              </div>
+            </div>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-success" *ngIf="!editar"
+              [disabled]="(encuesta.nombre.length == 0 || idTipoEncuesta == null)"
+              (click)="crearEncuesta()">Guardar</button>
+            <button type="button" class="btn btn-success" *ngIf="editar"
+              [disabled]="(encuesta.nombre.length == 0 || idTipoEncuesta == null)"
+              (click)="editarEncuesta()">Editar</button>
+            <button type="button" class="btn btn-default" data-dismiss="modal">Cerrar</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="col-xs-12 col-md-12 col-lg-6 ">
+    <div class="col-sm-12 text-center">
+      <h2>
+        Reportes finalizados
+      </h2>
+      <hr>
+    </div>
+
+    <div id="reportes-listado" class="col-sm-12">
+
+
+      <ngx-datatable #tablaReportesRespondido class="bootstrap" [columnMode]="'force'" [rows]="reportesFinalizados"
+        [scrollbarH]="true" [rowHeight]="50" [footerHeight]="50" [messages]="
+      {emptyMessage: 'No hay reportes realizados'}" [headerHeight]="50" [limit]="'10'" rowHeight="auto">
+
+        <ngx-datatable-row-detail class="force-nowrap" [rowHeight]="'auto'" #myDetailRow>
+          <ng-template let-row="row" let-expanded="expanded" ngx-datatable-row-detail-template>
+            <div class="container">
+              <table class="table table-striped table-bordered">
+                <thead>
+                  <tr>
+                    <th class="col-lg-1 col-md-2 col-sm-2 col-xs-2">Tipo pregunta</th>
+                    <th class="col-lg-4 col-md-4 col-sm-4 col-xs-4">Pregunta</th>
+                    <th class="col-lg-4 col-md-4 col-sm-4 col-xs-4">Respuesta</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr *ngFor="let data of row.data">
+                    <td>
+                      <strong>
+                        {{data.encuesta.esPregunta ? 'Pregunta' : data.esTexto ? 'Campo de texto' : 'Calificación'}}
+                      </strong>
+                    </td>
+                    <td>
+                      <strong>
+                        {{data.encuesta.nombre}}
+                      </strong>
+                    </td>
+                    <td>
+                      <strong>
+                        {{data.respuesta}}
+                      </strong>
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </ng-template>
+        </ngx-datatable-row-detail>
+        <ngx-datatable-column [width]="50" [resizeable]="false" [sortable]="false" [draggable]="false"
+          [canAutoResize]="false">
+          <ng-template let-row="row" let-expanded="expanded" ngx-datatable-cell-template>
+            <a href="javascript:void(0)" [class.datatable-icon-right]="!expanded" [class.datatable-icon-down]="expanded"
+              title="Expandir/collapsar fila" (click)="expandirFila(row)">
+            </a>
+          </ng-template>
+        </ngx-datatable-column>
+        <ngx-datatable-column name="Nombre del proyecto">
+          <ng-template let-row="row" style="border-left: 1px solid #d1d4d7;" ngx-datatable-cell-template>
+            <strong>
+              {{ row.proyecto }} </strong>
+          </ng-template>
+        </ngx-datatable-column>
+        <ngx-datatable-column name="Usuario">
+          <ng-template let-row="row" style="border-left: 1px solid #d1d4d7;" ngx-datatable-cell-template>
+            <span class="badge">{{row.usuario}}
+            </span>
+          </ng-template>
+        </ngx-datatable-column>
+      </ngx-datatable>
+
+
+    </div>
+
+    <div id="modal-reporte" class="modal fade" tabindex="-1">
+      <div class="modal-dialog">
+        <div class="modal-content">
+          <div class="modal-header">
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span
+                aria-hidden="true">&times;</span></button>
+            <h4 class="modal-title">Reportes</h4>
+          </div>
+          <div class="modal-body">
+            <div id="app-grupo-form" class="container-fluid">
+              <div id="" class="col-sm-12">
+                <form id="form-grupo" class="form-horizontal" action="#!" method="post">
+                  <div class="form-group">
+                    <label class="control-label col-sm-4" for="reporte">Descripción reporte</label>
+                    <div class="col-sm-8">
+                      <textarea id="reporte" placeholder="Describa aquí la pregunta del reporte" class="form-control"
+                        name="reporte" type="text" [(ngModel)]="encuesta.nombre "></textarea>
+                    </div>
+                  </div>
+
+                  <div class="form-group">
+                    <label class="control-label col-sm-4" for="reporte">Tipo reporte</label>
+                    <div class="col-sm-8">
+                      <ng-select [items]="tipo_encuesta" [disabled]="idTipoEncuesta != null"
+                        placeholder="Seleccione el tipo de reporte" bindLabel="descripcion" name="idTipoEncuesta"
+                        [(ngModel)]="idTipoEncuesta" bindValue="id">
+                      </ng-select>
+
+                    </div>
+                  </div>
+                </form>
+              </div>
+            </div>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-success" *ngIf="!editar"
+              [disabled]="(encuesta.nombre.length == 0 || idTipoEncuesta == null)"
+              (click)="crearEncuesta()">Guardar</button>
+            <button type="button" class="btn btn-success" *ngIf="editar"
+              [disabled]="(encuesta.nombre.length == 0 || idTipoEncuesta == null)"
+              (click)="editarEncuesta()">Editar</button>
+            <button type="button" class="btn btn-default" data-dismiss="modal">Cerrar</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

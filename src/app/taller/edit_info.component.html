@@ -1,0 +1,13 @@
+<div id="app-edit-info">
+	<div class="col-sm-12 no-padding" *ngIf="editInfo; else elseEdit">
+		<div class="col-sm-10 no-padding">
+			<input [(ngModel)]="newInfo.value" type="text" class="form-control" style="height: 27px">
+		</div>
+		<div class="col-sm-2" style="padding-left: 3px; padding-right: 0px">
+			<button (click)="onOkEditInfo()" type="button" class="btn btn-xs btn-success glyphicon glyphicon-ok"></button>
+			<button (click)="onCancelEditInfo()" type="button" class="btn btn-xs btn-danger glyphicon glyphicon-remove"></button>
+		</div>
+	</div>
+	<ng-template #elseEdit>{{ dataInput[keyInput] }}</ng-template>
+	<span *ngxPermissionsOnly="['Administrador']"><button *ngIf="dataInput && !editInfo" (click)="onEditInfo('direccion')" class="btn btn-xs btn-warning glyphicon glyphicon-pencil"></button></span>
+</div>

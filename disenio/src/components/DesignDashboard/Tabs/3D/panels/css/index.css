@@ -1,0 +1,131 @@
+/* PANELS */
+.panel{
+  border-radius: 1px;
+}
+
+.form-control{
+  border-radius: 1px;
+}
+
+
+/* Large desktop */
+@media (min-width: 1200px) {
+    .row-central{
+      height: 80vh;
+    }
+
+    .panel-top{
+      height: 10vh;
+      margin-bottom: 1vh;
+    }
+
+    .panel-central{
+      height: 90vh;
+      overflow-y: auto;
+    }
+
+    .panel-viewer{
+      height: 90vh;
+      border-radius: 0px;
+    }
+
+}
+
+
+.panel-viewer .panel-body{
+  padding: 2px;
+}
+
+#viewer{
+  height: 100%;
+}
+
+
+#console{
+  max-height: 30vh;
+  overflow-y: auto;
+}
+
+#piece-editor-index{
+  display: none;
+}
+
+.color-box {
+  width: 100%;
+  min-height: 20px;
+  border: 1px solid rgba(0, 0, 0, .2);
+}
+
+body, html, .container-fluid {
+     height: 100%;
+}
+
+.col-hidden {
+  display: none;
+}
+
+input {display: block; padding: 0; margin: 0; border: 0; width: 100%;}
+td {margin: 0; padding: 0;}
+
+.info {
+	position: absolute;
+	top: 10px;
+	width: 100%;
+	text-align: center;
+	z-index: 100;
+	display:block;
+  font-size: 24px;
+  color: black;
+}
+
+#toolbar{
+	position: absolute;
+}
+
+
+
+.fixed-panel{
+  height: 80vh;
+}
+
+#piece-editor .input-group{
+  width: 100%;
+}
+
+.bootstrap-table .fixed-table-container {
+  height: 30vh;
+  overflow-y: auto;
+}
+
+#viewer-tools{
+  position: absolute;
+  right: 0;
+  opacity: 0.8;
+}
+
+.gi-2x{font-size: 2em;}
+.gi-3x{font-size: 3em;}
+.gi-4x{font-size: 4em;}
+.gi-5x{font-size: 5em;}
+
+
+.glyphicon-visible:hover{
+  cursor: pointer; cursor: hand;
+  -webkit-transition: all 200ms ease-in;
+  -webkit-transform: scale(1.2);
+  -ms-transition: all 200ms ease-in;
+  -ms-transform: scale(1.2);
+  -moz-transition: all 200ms ease-in;
+  -moz-transform: scale(1.2);
+  transition: all 200ms ease-in;
+  transform: scale(1.2);
+}
+
+/*3dviewer hud*/
+div#currentView{
+  position: absolute;
+  font-size:110%;
+  right: 20px;
+  top: 10px;
+  color:rgba(0,0,0,0.5);
+}

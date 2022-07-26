@@ -1,0 +1,204 @@
+<div id="app-asistencia-list" class="container">
+	<div class="col-sm-10 col-sm-offset-1">
+		<div class="col-sm-12 text-center">
+			<h2>
+				Listado de asistencias
+			</h2>
+			<hr>
+		</div>
+
+		<div id="usuario-listado" class="col-sm-12">
+			<div class="form-horizontal">
+				<div class="col-sm-4 form-group">
+					<label class="control-label col-sm-4">Usuario: </label>
+					<div class="col-sm-8">
+						<select class="form-control" name="usuario" [(ngModel)]="form.usuario_id">
+							<option *ngFor="let usuario of usuarios" [value]="usuario.id">{{ usuario.usuario }}</option>
+						</select>
+					</div>
+				</div>
+
+				<div class="col-sm-6 form-group">
+					<label class="control-label col-sm-4"><span>Rango fecha</span></label>
+					<div class="col-sm-8">
+						<input type="text" class="form-control" daterangepicker name="fecha_fin"
+																															(selected)="selectedDate($event, daterange)"
+																															(applyDaterangepicker)="calendarApplied($event)"
+																															>
+					</div>
+				</div>
+
+				<div class="col-sm-2 form-group">
+					<button class="btn btn-sm btn-success" (click)="reloadAsistencias()">
+						<span class="glyphicon glyphicon-ok"></span>
+					</button>
+
+					<button class="btn btn-sm btn-default" (click)="resetForm()">
+						<span class="glyphicon glyphicon-refresh"></span>
+					</button>
+				</div>	
+				<div class="col-sm-12">
+					<hr>
+				</div>
+				<ng-container *ngIf="(ingresos > 0 || salidas > 0)">
+					<div class="col-sm-12">
+						<div class="col-sm-6 form-group">
+							<label class="control-label col-sm-4">Ingresos: </label>
+							<div class="col-sm-8">
+								<input type="number" class="form-control" readonly value="{{ ingresos }}">
+							</div>
+						</div>
+						<div class="col-sm-6 form-group">
+							<label class="control-label col-sm-4">Salidas: </label>
+							<div class="col-sm-8">
+								<input type="number" class="form-control" readonly value="{{ salidas }}">
+							</div>
+						</div>
+					</div>
+						<!-- <div class="col-sm-6 form-group">
+							<label class="control-label col-sm-4">Compensacion de horas extras: </label>
+							<div class="col-sm-6">
+								<input type="number" class="form-control"  value="{{ horas_extras }}">
+							</div>
+							<div class="col-sm-2">
+								<button class="btn btn-sm btn-success">
+									<span class="glyphicon glyphicon-ok"></span>
+								</button>
+							</div>
+						</div> -->
+					<h4>
+						Calculadora de Sueldo
+					</h4>
+					<div class="col-sm-12">
+							<div class="col-sm-6 form-group">
+								<label class="control-label col-sm-4">Dias trabajados: </label>
+								<div class="col-sm-8">
+									<input type="number" class="form-control" [(ngModel)]="calculadora.dias_trabajados" value="{{ ingresos }}">
+								</div>
+							</div>
+							<div class="col-sm-6 form-group">
+								<label class="control-label col-sm-4">Sueldo por dia: </label>
+								<div class="col-sm-8">
+									<input type="number" class="form-control" [(ngModel)]="calculadora.sueldo_dia">
+								</div>
+							</div>
+						</div>
+						<div class="col-sm-12">
+							<div class="col-sm-6 form-group">
+								<label class="control-label col-sm-4">Horas extras: </label>
+								<div class="col-sm-8">
+									<input type="number" class="form-control" [(ngModel)]="calculadora.horas_extras" value="{{ calculadora.horas_extras }}">
+								</div>
+							</div>
+							<div class="col-sm-6 form-group">
+								<label class="control-label col-sm-4">Valor horas extras: </label>
+								<div class="col-sm-8">
+									<input type="number" class="form-control" [(ngModel)]="calculadora.valor_horas_extras">
+								</div>
+							</div>
+						</div>
+						<div class="col-sm-12">
+							<div class="col-sm-6 form-group">
+								<label class="control-label col-sm-4">Observacion: </label>
+								<div class="col-sm-8">
+									<textarea class="form-control" [(ngModel)]="calculadora.observacion"></textarea>
+								</div>
+							</div>
+							<div class="col-sm-6 form-group">
+								<label class="control-label col-sm-4">Premio: </label>
+								<div class="col-sm-8">
+									<input type="number" class="form-control" [(ngModel)]="calculadora.pcd" value="{{ calculadora.pcd }}">
+								</div>
+							</div>
+						</div>
+						<div class="col-sm-12">
+							<div class="col-sm-6 form-group">
+								<label class="control-label col-sm-4">Compensacion: </label>
+								<div class="col-sm-8">
+									<input type="number" class="form-control" [(ngModel)]="calculadora.compensacion" value="{{ calculadora.compensacion }}">
+								</div>
+							</div>
+							<div class="col-sm-6 form-group">
+								<label class="control-label col-sm-4">Descuento: </label>
+								<div class="col-sm-8">
+									<input type="number" class="form-control" [(ngModel)]="calculadora.descuento" value="{{ calculadora.descuento }}">
+								</div>
+							</div>
+						</div>
+						<button class="btn-success btn-block btn" (click)="calcularSueldo()">Calcular</button>
+					<div class="col-sm-12">
+						<hr>
+					</div>
+					<ng-container *ngIf="(calculadora.total_sueldo > 0)">
+						<div class="col-sm-12">
+							<div class="col-sm-6">
+								<h3><b>Subtotal:</b></h3>
+								<p>Sueldo: ${{ calculadora.total_sueldo }}</p>
+								<p>Horas extras: ${{ calculadora.total_horas_extras }}</p>
+								<p>Premios: ${{ calculadora.pcd }}</p>
+								<p>Compensacion: ${{ calculadora.compensacion }}</p>
+								<p>Descuento: ${{ calculadora.descuento }}</p>
+							</div>
+							<div class="col-sm-6" style="text-align: right;">
+								<h2><b>Total</b></h2>
+								<p>${{ calculadora.total_sueldo + calculadora.total_horas_extras + calculadora.pcd + calculadora.compensacion + calculadora.descuento}}</p>
+								<p>Observacion: {{ calculadora.observacion }}</p>
+							</div>
+							<ng-container *ngIf="dataPdf.path == ''; else verReporte">
+								<button class="btn-success btn-block btn" (click)="reportePDF($event.target)">Generar reporte</button>
+							</ng-container>
+							<ng-template #verReporte>
+								<button class="btn-success btn-block btn" (click)="redirectPdf()">VER REPORTE</button>
+							</ng-template>
+							
+						</div>
+					</ng-container>
+					<div class="col-sm-12">
+						<hr>
+					</div>
+				</ng-container>
+			</div>
+			
+			<table class="table table-hover">
+				<thead>
+					<th>#</th>
+					<th>Dia</th>
+					<th>Usuario</th>
+					<th>Marca</th>
+					<th>Tipo</th>
+          <th *ngIf="sortCausaSalida==='causaSalida'" (click)="setSortProps('-causaSalida')">
+            Causa/Salida <span class="glyphicon glyphicon-sort-by-alphabet"></span>
+          </th>
+          <th *ngIf="sortCausaSalida==='-causaSalida'" (click)="setSortProps('causaSalida')">
+            Causa/Salida <span class="glyphicon glyphicon-sort-by-alphabet-alt"></span>
+          </th>
+					<th>Observación</th>
+				</thead>
+
+				<tbody>
+					<ng-container *ngIf="(asistencias.length > 0); else emptyAsistencias">
+						<tr *ngFor="let asistencia of asistencias; let i = index" [ngClass]="(asistencia.id != null )?'bg-success':''">
+							<td>{{ i+1 }}</td>
+							<td>{{ asistencia.dia }}</td>
+							<td>{{ asistencia.usuario.usuario }}</td>
+							<td>{{ asistencia.fecha }}</td>
+							<td>
+								{{ asistencia.tipo_asistencia.tipo }}
+							</td>
+							<td>{{ (asistencia.tipo_asistencia_id == 3 || asistencia.tipo_asistencia_id == 4)
+								? (asistencia.tipo_salida.tipo)
+								: (asistencia.asistencia_causa) ? asistencia.asistencia_causa.causa : 'N/A' }}</td>
+							<td>{{ (asistencia.observacion) ? asistencia.observacion : 'N/A' }}</td>
+						</tr>
+					</ng-container>
+
+					<ng-template #emptyAsistencias>
+						<tr>
+							<td class="text-center" colspan="6"><strong>No posee asistencias registradas</strong></td>
+						</tr>
+					</ng-template>
+				</tbody>
+			</table>
+		</div>
+	</div>
+</div>

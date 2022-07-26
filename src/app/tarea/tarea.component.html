@@ -1,0 +1,175 @@
+<div id="app-tarea" class="container-fluid">
+  <div class="col-sm-10 col-sm-offset-1">
+    <div class="col-sm-12 text-center">
+      <h3>Próximas Tareas</h3>
+    </div>
+    <div *ngFor="let item of resuHtml; let myIndex = index">
+      <div id='proyecto-{{myIndex}}' [hidden]="myIndex>0">
+        <table>
+          <tr>
+            <td><button [disabled]="(myIndex == 0)" class='btn btn-default' (click)='showpages(myIndex, myIndex-1);'>Anterior</button></td>
+            <td><button [disabled]="myIndex == resuHtml.length - 1" class='btn btn-default' (click)='showpages(myIndex, myIndex+1);'>Proximo</button></td>
+          </tr>
+        </table>
+        <hr>
+        <table *ngIf="resuHtml[myIndex].hasOwnProperty('cliente')">
+          <tr>
+            <td colspan="2"><p><b>Proyecto: </b>{{resuHtml[myIndex].cliente.nombre_completo}} - {{resuHtml[myIndex].proyecto}}</p></td>
+          </tr>
+          <tr>
+            <td colspan="2"><p><b>Fecha Instalación: </b>{{resuHtml[myIndex].instalacion_fecha}}</p></td>
+          </tr>
+        </table>
+        <table *ngIf="resuHtml[myIndex].hasOwnProperty('cliente')" style="width: 100%;">
+          <tr style="height: 30px;" *ngIf="(resuHtml[myIndex].assignPiezasDate != resuHtml[myIndex].actualDate) && resuHtml[myIndex].porcejPiezas < 100">
+            <td><b>Piezas:</b><td id='pieza-{{myIndex}}'><button class='btn btn-default' (click)='tomarPiezas(resuHtml[myIndex].id, myIndex);'>Tomar tarea</button></td>
+            <td class="progress-bar" [ngStyle]="{'background-color': colorProgreso(resuHtml[myIndex].porcejPiezas), 'width': resuHtml[myIndex].porcejPiezas + '%', 'min-width': '2em', 'border-radius': '4px'}">{{resuHtml[myIndex].porcejPiezas.toFixed(2)}}%</td>
+          </tr>
+          <tr style="height: 30px;" *ngIf="resuHtml[myIndex].assignPiezas != null && resuHtml[myIndex].assignPiezasDate == resuHtml[myIndex].actualDate && resuHtml[myIndex].porcejPiezas < 100">
+            <td><b>Piezas:</b><td>Tarea tomada por: {{resuHtml[myIndex].assign_piezas?.usuario}}</td>
+            <td class="progress-bar" [ngStyle]="{'background-color': colorProgreso(resuHtml[myIndex].porcejPiezas), 'width': resuHtml[myIndex].porcejPiezas + '%', 'min-width': '2em', 'border-radius': '4px'}">{{resuHtml[myIndex].porcejPiezas.toFixed(2)}}%</td>
+          </tr>
+          <tr style="height: 30px;" *ngIf="resuHtml[myIndex].porcejPiezas == 100">
+            <td><b>Piezas:</b><td>Finalizado</td>
+            <td class="progress-bar" [ngStyle]="{'background-color': colorProgreso(resuHtml[myIndex].porcejPiezas), 'width': resuHtml[myIndex].porcejPiezas + '%', 'min-width': '2em', 'border-radius': '4px'}">{{resuHtml[myIndex].porcejPiezas.toFixed(2)}}%</td>
+          </tr>
+
+          <tr style="height: 30px;" *ngIf="(resuHtml[myIndex].assignTapacantosDate != resuHtml[myIndex].actualDate) && resuHtml[myIndex].porcejTapacantos < 100">
+            <td><b>Tapacantos:</b><td id='tapacanto-{{myIndex}}'><button class='btn btn-default' (click)='tomarTapacantos(resuHtml[myIndex].id, myIndex);'>Tomar tarea</button></td>
+            <td class="progress-bar" [ngStyle]="{'background-color': colorProgreso(resuHtml[myIndex].porcejTapacantos), 'width': resuHtml[myIndex].porcejTapacantos + '%', 'min-width': '2em', 'border-radius': '4px'}">{{resuHtml[myIndex].porcejTapacantos.toFixed(2)}}%</td>
+          </tr>
+          <tr style="height: 30px;" *ngIf="resuHtml[myIndex].assignTapacantos != null && resuHtml[myIndex].assignTapacantosDate == resuHtml[myIndex].actualDate && resuHtml[myIndex].porcejTapacantos < 100">
+            <td><b>Tapacantos:</b><td id='tapacanto-{{myIndex}}'>Tarea tomada por: {{resuHtml[myIndex].assign_tapacantos?.usuario}}</td>
+            <td class="progress-bar" [ngStyle]="{'background-color': colorProgreso(resuHtml[myIndex].porcejTapacantos), 'width': resuHtml[myIndex].porcejTapacantos + '%', 'min-width': '2em', 'border-radius': '4px'}">{{resuHtml[myIndex].porcejTapacantos.toFixed(2)}}%</td>
+          </tr>
+          <tr style="height: 30px;" *ngIf="resuHtml[myIndex].porcejTapacantos == 100">
+            <td><b>Tapacantos:</b><td>Finalizado</td>
+            <td class="progress-bar" [ngStyle]="{'background-color': colorProgreso(resuHtml[myIndex].porcejTapacantos), 'width': resuHtml[myIndex].porcejTapacantos + '%', 'min-width': '2em', 'border-radius': '4px'}">{{resuHtml[myIndex].porcejTapacantos.toFixed(2)}}%</td>
+          </tr>
+
+          <tr style="height: 30px;" *ngIf="(resuHtml[myIndex].assignPrearmadoDate != resuHtml[myIndex].actualDate) && resuHtml[myIndex].porcejPrearmado < 100">
+            <td><b>Prearmado:</b><td id='prearmado-{{myIndex}}'><button class='btn btn-default' (click)='tomarPrearmado(resuHtml[myIndex].id, myIndex);'>Tomar tarea</button></td>
+            <td class="progress-bar" [ngStyle]="{'background-color': colorProgreso(resuHtml[myIndex].porcejPrearmado), 'width': resuHtml[myIndex].porcejPrearmado + '%', 'min-width': '2em', 'border-radius': '4px'}">{{resuHtml[myIndex].porcejPrearmado.toFixed(2)}}%</td>
+          </tr>
+          <tr style="height: 30px;" *ngIf="resuHtml[myIndex].assignPrearmado != null && resuHtml[myIndex].assignPrearmadoDate == resuHtml[myIndex].actualDate && resuHtml[myIndex].porcejPrearmado < 100">
+            <td><b>Prearmado:</b><td id='prearmado-{{myIndex}}'>Tarea tomada por: {{resuHtml[myIndex].assign_prearmado?.usuario}}</td>
+            <td class="progress-bar" [ngStyle]="{'background-color': colorProgreso(resuHtml[myIndex].porcejPrearmado), 'width': resuHtml[myIndex].porcejPrearmado + '%', 'min-width': '2em', 'border-radius': '4px'}">{{resuHtml[myIndex].porcejPrearmado.toFixed(2)}}%</td>
+          </tr>
+          <tr style="height: 30px;" *ngIf="resuHtml[myIndex].porcejPrearmado == 100">
+            <td><b>Prearmado:</b><td>Finalizado</td>
+            <td class="progress-bar" [ngStyle]="{'background-color': colorProgreso(resuHtml[myIndex].porcejPrearmado), 'width': resuHtml[myIndex].porcejPrearmado + '%', 'min-width': '2em', 'border-radius': '4px'}">{{resuHtml[myIndex].porcejPrearmado.toFixed(2)}}%</td>
+          </tr>
+
+          <tr style="height: 30px;" *ngIf="(resuHtml[myIndex].assignCajonesDate != resuHtml[myIndex].actualDate) && resuHtml[myIndex].porcejCajones < 100">
+            <td style="width: 10%;"><b>Cajones:</b><td style="width: 10%;" id='cajon-{{myIndex}}'><button class='btn btn-default' (click)='tomarCajon(resuHtml[myIndex].id, myIndex);'>Tomar tarea</button></td>
+            <td class="progress-bar" [ngStyle]="{'background-color': colorProgreso(resuHtml[myIndex].porcejCajones), 'width': resuHtml[myIndex].porcejCajones + '%', 'min-width': '2em', 'border-radius': '4px'}">{{resuHtml[myIndex].porcejCajones.toFixed(2)}}%</td>
+          </tr>
+          <tr style="height: 30px;" *ngIf="resuHtml[myIndex].assignCajones != null && resuHtml[myIndex].assignCajonesDate == resuHtml[myIndex].actualDate && resuHtml[myIndex].porcejCajones < 100">
+            <td style="width: 10%;"><b>Cajones:</b><td style="width: 10%;" id='cajon-{{myIndex}}'>Tarea tomada por: {{resuHtml[myIndex].assign_cajones?.usuario}}</td>
+            <td class="progress-bar" [ngStyle]="{'background-color': colorProgreso(resuHtml[myIndex].porcejCajones), 'width': resuHtml[myIndex].porcejCajones + '%', 'min-width': '2em', 'border-radius': '4px'}">{{resuHtml[myIndex].porcejCajones.toFixed(2)}}%</td>
+          </tr>
+          <tr style="height: 30px;" *ngIf="resuHtml[myIndex].porcejCajones == 100">
+            <td style="width: 10%;"><b>Cajones:</b><td style="width: 10%;">Finalizado</td>
+            <td class="progress-bar" [ngStyle]="{'background-color': colorProgreso(resuHtml[myIndex].porcejCajones), 'width': resuHtml[myIndex].porcejCajones + '%', 'min-width': '2em', 'border-radius': '4px'}">{{resuHtml[myIndex].porcejCajones.toFixed(2)}}%</td>
+          </tr>
+
+          <tr style="height: 30px;" *ngIf="(resuHtml[myIndex].assignModulosDate != resuHtml[myIndex].actualDate) && resuHtml[myIndex].porcejModulos < 100">
+            <td><b>Modulos:</b><td id='modulo-{{myIndex}}'><button class='btn btn-default' (click)='tomarModulo(resuHtml[myIndex].id, myIndex);'>Tomar tarea</button></td>
+            <td class="progress-bar" [ngStyle]="{'background-color': colorProgreso(resuHtml[myIndex].porcejModulos), 'width': resuHtml[myIndex].porcejModulos + '%', 'min-width': '2em', 'border-radius': '4px'}">{{resuHtml[myIndex].porcejModulos.toFixed(2)}}%</td>
+          </tr>
+          <tr style="height: 30px;" *ngIf="resuHtml[myIndex].assignModulos != null && resuHtml[myIndex].assignModulosDate == resuHtml[myIndex].actualDate && resuHtml[myIndex].porcejModulos < 100">
+            <td><b>Modulos:</b><td id='modulo-{{myIndex}}'>Tarea tomada por: {{resuHtml[myIndex].assign_modulos?.usuario}}</td>
+            <td class="progress-bar" [ngStyle]="{'background-color': colorProgreso(resuHtml[myIndex].porcejModulos), 'width': resuHtml[myIndex].porcejModulos + '%', 'min-width': '2em', 'border-radius': '4px'}">{{resuHtml[myIndex].porcejModulos.toFixed(2)}}%</td>
+          </tr>
+          <tr style="height: 30px;" *ngIf="resuHtml[myIndex].porcejModulos == 100">
+            <td><b>Modulos:</b><td>Finalizado</td>
+            <td class="progress-bar" [ngStyle]="{'background-color': colorProgreso(resuHtml[myIndex].porcejModulos), 'width': resuHtml[myIndex].porcejModulos + '%', 'min-width': '2em', 'border-radius': '4px'}">{{resuHtml[myIndex].porcejModulos.toFixed(2)}}%</td>
+          </tr>
+        </table>
+        <table *ngIf="!resuHtml[myIndex].hasOwnProperty('cliente')">
+          <tr>
+            <td colspan="2"><p><b>Tarea: </b>{{resuHtml[myIndex].tarea}}</p></td>
+          </tr>
+          <tr>
+            <td colspan="2"><p><b>Descripción: </b>{{resuHtml[myIndex].descripcion}}</p></td>
+          </tr>
+          <tr>
+            <td colspan="2"><p><b>Dia: </b>{{resuHtml[myIndex].dia}}</p></td>
+          </tr>
+          <tr>
+            <td colspan="2"><p><b>Dirección: </b>{{resuHtml[myIndex].direccion}}</p></td>
+          </tr>
+          <tr>
+            <td><b>Quien asistira: </b></td>
+            <td *ngFor="let assit of resuHtml[myIndex].assistants; let assistIndex = index">{{users[resuHtml[myIndex].assistants[assistIndex]].nombre_completo}}-</td>
+          </tr>
+          <tr *ngIf="resuHtml[myIndex].assignTask == null">
+            <td id='evento-{{myIndex}}'><button class='btn btn-default' (click)='tomarEvento(resuHtml[myIndex].id, myIndex);'>Tomar tarea</button></td>
+          </tr>
+          <tr *ngIf="resuHtml[myIndex].assignTask != null">
+            <td id='evento-{{myIndex}}'><b>Tarea tomada por: </b>{{resuHtml[myIndex].assign_task?.usuario}}</td>
+          </tr>
+        </table>
+        <hr>
+      </div>
+    </div>
+    <div *ngFor="let item of itemsToShowFirst; let myIndex = index" [hidden]="showAll">
+      <div class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true" id='proyectoFirst-{{myIndex}}' [hidden]="myIndex>0">
+        <div class="modal-dialog">
+          <div class="modal-content">
+            <div class="modal-body">
+              <table align="center">
+                <tr>
+                  <td style="font-size: 18px; text-align: center; font-weight: bold;">
+                    {{itemsToShowFirst[myIndex].fancyHeader}}
+                  </td>
+                </tr>
+              </table>
+              <table *ngIf="itemsToShowFirst[myIndex].hasOwnProperty('cliente')">
+                <tr>
+                  <td colspan="2"><p><b>Proyecto: </b>{{itemsToShowFirst[myIndex].cliente.nombre_completo}} - {{itemsToShowFirst[myIndex].proyecto}}</p></td>
+                </tr>
+                <tr>
+                  <td colspan="2"><p><b>Fecha Instalación: </b>{{itemsToShowFirst[myIndex].instalacion_fecha}}</p></td>
+                </tr>
+                <tr>
+                  <td><b>Quien asistira: </b><p *ngFor="let assit of itemsToShowFirst[myIndex].assistants; let assistIndex = index">{{users[itemsToShowFirst[myIndex].assistants[assistIndex]].nombre_completo}}</p></td>
+                </tr>
+              </table>
+              <table *ngIf="itemsToShowFirst[myIndex].hasOwnProperty('cliente')">
+                <tr style="height: 30px;">
+                  <td style="width: 7%;"><b>Progreso:</b></td>
+                  <td class="progress-bar" [ngStyle]="{'background-color': colorProgreso(itemsToShowFirst[myIndex].totalPorcej), 'width': itemsToShowFirst[myIndex].totalPorcej + '%', 'min-width': '2em', 'border-radius': '4px'}">{{itemsToShowFirst[myIndex].totalPorcej.toFixed(2)}}%</td>
+                </tr>
+              </table>
+              <table *ngIf="!itemsToShowFirst[myIndex].hasOwnProperty('cliente')">
+                <tr>
+                  <td colspan="2"><p><b>Tarea: </b>{{itemsToShowFirst[myIndex].tarea}}</p></td>
+                </tr>
+                <tr>
+                  <td colspan="2"><p><b>Descripción: </b>{{itemsToShowFirst[myIndex].descripcion}}</p></td>
+                </tr>
+                <tr>
+                  <td colspan="2"><p><b>Dia: </b>{{itemsToShowFirst[myIndex].dia}}</p></td>
+                </tr>
+                <tr>
+                  <td colspan="2"><p><b>Dirección: </b>{{itemsToShowFirst[myIndex].direccion}}</p></td>
+                </tr>
+                <tr>
+                  <td><b>Quien asistira: </b><p *ngFor="let assit of itemsToShowFirst[myIndex].assistants; let assistIndex = index">{{users[itemsToShowFirst[myIndex].assistants[assistIndex]].nombre_completo}}</p></td>
+                </tr>
+              </table>
+              <table>
+                <tr>
+                  <!--<td><button [disabled]="myIndex == 0" class='btn btn-default' (click)='showpagesFirst(myIndex, myIndex-1);'>Anterior</button></td>-->
+                  <td><button class='btn btn-default' (click)='showpagesFirst(myIndex, myIndex+1);'>OK</button></td>
+                </tr>
+              </table>
+            </div>
+          </div>
+        </div>
+      </div>
+      <a style="display:none;" id="proyectoFirstOpen-{{myIndex}}" data-toggle="modal" href="#proyectoFirst-{{myIndex}}">Open Modal</a>
+    </div>
+  </div>
+</div>

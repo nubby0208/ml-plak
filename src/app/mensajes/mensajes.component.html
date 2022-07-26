@@ -1,0 +1,403 @@
+<div class="container">
+	<div class="panel-body">
+		<ul id="tabs" class="nav nav-tabs nav-justified">
+			<li class="active">
+				<a data-toggle="tab" href="#menu2">CHAT</a>
+			</li>
+			<li><a data-toggle="tab" href="#menu1">TEMAS GLOBALES</a></li>
+			<!-- <li><a data-toggle="tab" href="#menu3">TAREA</a></li> -->
+		</ul>
+
+		<div class="tab-content" id="content">
+			<div id="menu1" class="tab-pane fade">
+				<!-- <h3 class=" text-center">GRUPO</h3> -->
+				<!-- [ngStyle]="{'visibility':columngrupovisible != false ? 'visible' : 'hidden' }"" -->
+				<div class="messaging">
+					<div class="inbox_msg">
+						<div class="inbox_people col-xs-12 col-sm-4 col-md-4 col-lg-4" [ngClass]="{'hidden': (modeOneView && (groupSelectedName && groupSelectedName.length > 0))}">
+							<div class="headind_srch">
+								<div class="recent_heading">
+									<h4>Temas</h4>
+								</div>
+
+								<div class="srch_bar">
+									<div class="stylish-input-group">
+										<input type="text" class="search-bar" placeholder="Filtrar" [(ngModel)]="busquedaTema" (ngModelChange)="temaFiltrar()">
+										<span class="icon-group-cc">
+											<button type="button"> <i class="fa fa-search" aria-hidden="true"></i> </button>
+										</span>
+									</div>
+								</div>
+							</div>
+
+							<div class="inbox_chat">
+								<div *ngFor="let tema of listadoTemas; let idx = index"
+									[hidden] = "tema.hidden"
+									class="chat_list" 
+									[ngClass]="{'chat_list_active': actualopcionselec === tema.grup_nid}">
+									<div class="chat_people" (click)='selecttema(tema)' id="tema{{tema.grup_nid}}">
+										<div class="chat_img"></div>
+										<div class="chat_ib">
+											<h5>
+												{{ tema.grup_vtema || "~No posee nombre" }}
+												<span *ngIf="(tema.mensajes_no_leidos && (tema.mensajes_no_leidos > 0))" class="badge badge-warning">
+													{{ tema.mensajes_no_leidos }}
+												</span>
+											</h5>
+											<ng-template [ngxPermissionsOnly]="['Administrador']">
+												<button class="btn btn-sm btn-danger glyphicon glyphicon-remove button-remove" type="button" (click)='deletetema($event, tema.grup_nid)'></button>
+											</ng-template>
+										</div>
+									</div>
+								</div>
+							</div>
+
+							<div class="type_msg">
+								<div class="input_msg_write">
+									<input [(ngModel)]="datatipogrupo" type="text" class="write_msg" placeholder="Crear grupo" />
+									<button (click)="nuevotipogrupo()" class="msg-add-group glyphicon glyphicon-plus" type="button"></button>
+								</div>
+							</div>
+						</div>
+
+						<div class="mesgs col-xs-12 col-sm-8 col-md-8 col-lg-8" [ngClass]="{'show': (modeOneView && (groupSelectedName && groupSelectedName.length > 0))}">
+							<div *ngIf="modeOneView"  class="headind_srch chat-info">
+								<div class="recent_heading">
+									<span (click)="backGroup()" class="button-back"><i class="glyphicon glyphicon-chevron-left"></i></span>
+									<h4>{{ groupSelectedName }}</h4>
+								</div>
+							</div>
+
+							<div id="msg_history-group" class="msg_history" [ngClass]="{'one-view-chat-history': (modeOneView)}">
+								<div class="img-loader-spinner" *ngIf="groupLoader">
+									<div class="img-loader">
+										<div>
+										</div>
+									</div>
+								</div>
+
+								<div *ngFor=" let tema of listagrupomensajes; index as i;" id="grupomensajes{{i}}" class="incoming_msg">
+									<div *ngIf="listagrupomensajes[i].user_nid_envidox != iduseractual" class="incoming_msg_img"> </div>
+
+									<div *ngIf="listagrupomensajes[i].user_nid_envidox != iduseractual" class="received_msg">
+										<div class="received_withd_msg">
+											<span class="name_msg"> {{listausuarios[listagrupomensajes[i].user_nid_envidox]}}</span>
+											<p>{{ listagrupomensajes[i].grme_vmensaje }}</p>
+											<span class="time_date">{{ moment(listagrupomensajes[i].grme_dfechaenvio).format("MMM DD, YYYY ~ hh:mm a") }}</span>
+										</div>
+									</div>
+
+									<div *ngIf="listagrupomensajes[i].user_nid_envidox == iduseractual" class="outgoing_msg">
+										<div class="sent_msg">
+											<span class="time_date"> {{listausuarios[listagrupomensajes[i].user_nid_envidox]}}</span>
+											<p>{{ listagrupomensajes[i].grme_vmensaje }}</p>
+											<span class="time_date">{{ moment(listagrupomensajes[i].grme_dfechaenvio).format("MMM DD, YYYY ~ hh:mm a") }}</span>
+										</div>
+									</div>
+								</div>
+
+							</div>
+							
+							<div class="type_msg">
+								<div class="input_msg_write">
+									<input [(ngModel)]="datagrupomensaje" type="text" class="write_msg" placeholder="Escribe un mensaje"/>
+									<button (click)="nuevogrupomensaje()" class="msg_send_btn glyphicon glyphicon-send" type="button"></button>
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+
+			<div id="menu2" class="tab-pane fade in active">
+				<!-- <h3 class=" text-center">CHAT</h3> -->
+				<div class="messaging">
+					<div class="inbox_msg" [ngClass]="{'sidebar-active': showSidebarChat}">
+						<div id="mySidebar" class="sidebar">
+						  <a href="javascript:void(0)" class="menu">MENÚ</a>
+						  <a href="javascript:void(0)" (click)="modalChatGrupo()">Crear grupo</a>
+						</div>
+
+						<div class="inbox_people col-xs-12 col-sm-4 col-md-4 col-lg-4" [ngClass]="{'hidden': (modeOneView && (privateSelectedName && privateSelectedName.length > 0))}">
+							<div class="headind_srch">
+								<div id="div-menu-chat">
+									<button id="menu-chat" _ngcontent-c0="" aria-controls="navbar" aria-expanded="false" class="navbar-toggle ng-star-inserted collapsed" data-target="#por-definir" data-toggle="collapse" type="button" (click)="btnShowSidebar()">
+										<span _ngcontent-c0="" class="sr-only">Toggle navigation</span>
+										<span _ngcontent-c0="" class="icon-bar"></span>
+										<span _ngcontent-c0="" class="icon-bar"></span>
+										<span _ngcontent-c0="" class="icon-bar"></span>
+									</button>
+								</div>
+
+								<div class="recent_heading">
+									<h4>Usuarios</h4>
+								</div>
+
+								<div class="srch_bar">
+									<div class="stylish-input-group">
+										<input type="text" class="search-bar" placeholder="Filtrar" [(ngModel)]="busquedaUsuario" (ngModelChange)="usuarioFiltrar()">
+										<span class="icon-group-cc">
+											<button type="button"> <i class="fa fa-search" aria-hidden="true"></i> </button>
+										</span>
+									</div>
+								</div>
+							</div>
+
+							<div class="inbox_chat">
+								<div *ngFor="let usuario of listadoUsuarios;" 
+									[hidden]="usuario.hidden"
+									(click)="cargarmensajechat(usuario)"
+									class="chat_list"
+									[ngClass]="{'chat_list_active': actualopcionselec === usuario.id}">
+									<div class="chat_people">
+										<div *ngIf=" iduseractual != usuario.id" class="chat_img"> </div>
+										<div *ngIf=" iduseractual != usuario.id" class="chat_ib">
+											<h5>
+												<span *ngIf="usuario.tipo === 'chat_grupo'" class="badge badge-primary badge-group">
+													Grupo
+												</span>
+
+												<span *ngIf="usuario.tipo === 'chat_grupo'; else elseChatGrupo">
+													{{ usuario.nombre }}
+												</span>
+
+												<ng-template #elseChatGrupo>
+													<span>
+														{{ usuario.usuario }}
+													</span>
+												</ng-template>
+
+												<span *ngIf="(usuario.tipo === 'chat' && listausuariosmsjc[usuario.id] != 0)"
+													class="badge badge-warning">{{listausuariosmsjc[usuario.id]}}
+												</span>
+
+												<span *ngIf="(usuario.tipo === 'chat_grupo' && usuario.mensajes_no_leidos > 0)"
+													class="badge badge-warning">{{ usuario.mensajes_no_leidos }}
+												</span>
+											</h5>
+										</div>
+									</div>
+								</div>
+							</div>
+						</div>
+
+						<div class="mesgs col-xs-12 col-sm-8 col-md-8 col-lg-8" [ngClass]="{'show': (modeOneView && (privateSelectedName && privateSelectedName.length > 0))}">
+							<div *ngIf="modeOneView"  class="headind_srch chat-info">
+								<div class="recent_heading">
+									<span (click)="backPrivate()" class="button-back"><i class="glyphicon glyphicon-chevron-left"></i></span>
+									<h4>{{ privateSelectedName }}</h4>
+								</div>
+							</div>
+
+							<div id="msg_history-private" class="msg_history">
+								<div class="img-loader-spinner" *ngIf="privateLoader">
+									<div class="img-loader">
+										<div>
+										</div>
+									</div>
+								</div>
+
+								<ng-container *ngIf="chatSelected && chatSelected.tipo === 'chat'; else chatGrupo">
+									<div *ngFor=" let message of listachatmensajes; index as i " id="chatmensajes{{i}}">
+										<div *ngIf="message.user_enviox_nid == iduseractual" class="outgoing_msg">
+											<div class="sent_msg">
+												<span class="time_date">
+													{{listausuarios[message.user_enviox_nid]}}
+												</span>
+												<p>{{ message.chtm_mensaje }}</p>
+												<span *ngIf="message.chtm_nvisto == 1" class="time_date check-icon  glyphicon glyphicon-ok"></span>
+												<span class="time_date">
+													{{ moment(message.chtm_dfechacrea).format("MMM DD, YYYY ~ hh:mm a") }}
+												</span>
+											</div>
+											<button *ngIf="message.chtm_tipo == 'pedido'"
+												type="button"
+												disabled="disabled"
+												class="btn btn-sm msg_check_btn msg_check_btn_right glyphicon glyphicon-shopping-cart"
+												[ngClass]="[(message.chtm_npedidosts == 1) ? 'msg_check_approved' : 'msg_check_waiting']"
+												></button>
+										</div>
+
+										<div *ngIf="message.user_enviox_nid != iduseractual" class="incoming_msg">
+											<div class="incoming_msg_img"> </div>
+											<div class="received_msg">
+												<div class="received_withd_msg">
+													<span class="time_date"> 
+														{{listausuarios[message.user_enviox_nid]}}
+													</span>
+													<p>{{ message.chtm_mensaje }}</p>
+													<span *ngIf="message.chtm_nvisto == 1" class="time_date check-icon glyphicon glyphicon-ok"></span>
+													<span class="time_date">
+														{{ moment(message.chtm_dfechacrea).format("MMM DD, YYYY ~ hh:mm a") }}
+													</span>
+												</div>
+												<button *ngIf="message.chtm_tipo == 'pedido'"
+													type="button"
+													class="btn btn-sm msg_check_btn glyphicon glyphicon-ok"
+													[disabled]="message.chtm_npedidosts == 1"
+													[ngClass]="[(message.chtm_npedidosts == 1) ? 'msg_check_approved' : 'msg_check_waiting']"
+													(click)="checkpedidochat(message.chtm_nid)"
+													></button>
+											</div>
+										</div>
+									</div>
+								</ng-container>
+
+								<ng-template #chatGrupo>
+									<div *ngFor=" let message of chatGrupoMessages; index as i;" class="incoming_msg">
+										<div *ngIf="message.usuario_id != iduseractual" class="incoming_msg_img"> </div>
+
+										<div *ngIf="message.usuario_id != iduseractual" class="received_msg">
+											<div class="received_msg">
+												<div class="received_withd_msg">
+													<span class="name_msg">
+														{{ message.usuario.usuario }}
+													</span>
+													<p>{{ message.mensaje }}</p>
+													<span class="time_date">
+														{{ moment(message.created_at).format("MMM DD, YYYY ~ hh:mm a") }}
+														<span *ngIf="(message.aprobado_usuario_id > 0)">
+															~> Aprobado por {{ message.aprobado_usuario.usuario }}
+														</span>
+													</span>
+												</div>
+												<button *ngIf="message.tipo === 'pedido'"
+													type="button"
+													class="btn btn-sm msg_check_btn chat_grupo_check_btn glyphicon glyphicon-ok"
+													[disabled]="(message.aprobado_usuario_id > 0)"
+													[ngClass]="[(message.aprobado_usuario_id > 0) ? 'msg_check_approved' : 'msg_check_waiting']"
+													(click)="checkpedidochat(message.id, 'chat_grupo')"
+													></button>
+											</div>
+										</div>
+
+										<div *ngIf="message.usuario_id == iduseractual" class="outgoing_msg">
+											<div class="sent_msg">
+												<span class="time_date">
+													{{ message.usuario.usuario }}
+												</span>
+												<p>{{ message.mensaje }}</p>
+												<span class="time_date">
+													{{ moment(message.created_at).format("MMM DD, YYYY ~ hh:mm a") }}
+													<span *ngIf="(message.aprobado_usuario_id > 0)">
+														~> Aprobado por {{ message.aprobado_usuario.usuario }}
+													</span>
+												</span>
+											</div>
+											<button *ngIf="message.tipo === 'pedido'"
+												type="button"
+												disabled="disabled"
+												class="btn btn-sm msg_check_btn msg_check_btn_right chat_grupo_check_btn glyphicon glyphicon-shopping-cart"
+												[ngClass]="[(message.aprobado_usuario_id > 0) ? 'msg_check_approved' : 'msg_check_waiting']">
+											</button>
+										</div>
+									</div>
+								</ng-template>
+							</div>
+
+							<div class="type_msg">
+								<div class="input_msg_write">
+									<input type="text" [(ngModel)]="mensajechat" class="write_msg" placeholder="Escribe un mensaje o un pedido"/>
+									<button type="button" (click)="enviarchatmensaje('mensaje')" class="msg_send_btn with-other-btn glyphicon glyphicon-send"></button>
+									<button type="button" (click)="enviarchatmensaje('pedido')" class="msg_request_btn glyphicon glyphicon-shopping-cart"></button>
+								</div>
+							</div>
+						</div>
+					</div>   
+				</div>
+			</div>
+			
+			<!-- <div id="menu3" class="tab-pane fade ">
+				<div class="container">
+					<div class="row">
+						<div class="col-md-12 deck-column panel-group">
+							<div class="panel panel-success">
+								<div class="panel-heading">
+									<i class="glyphicon glyphicon-briefcase"></i>
+									TAREAS
+								</div>
+
+								<div class="panel-body">
+									<div class="row">
+										<div class="form-group col-md-6">
+											<input type="text" class="form-control" [(ngModel)]="textotarea" placeholder="Agregar tarea">
+										</div>
+										<button type="button" class="btn btn-primary mb-2" (click)="agregartarea()" > + </button>
+									</div>
+									<div class="list-decks">
+										<table class="table">
+											<thead>
+												<tr>
+													<th scope="col">#</th>
+													<th scope="col">tarea</th>
+												</tr>
+											</thead>
+											<tbody *ngFor=" let tareaid of arraylistatareas; let i = index; "  >
+												<tr  >
+													<td><button  [disabled]="listatareas[tareaid].sts == 1"  type="button" class="btn btn-primary" (click)="tarearealizada(tareaid)"> OK </button></td>
+													<td>{{ listatareas[tareaid].mensaje }}</td>
+												</tr>
+											</tbody>
+										</table>
+									</div>        
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div> -->
+		</div>
+	</div>
+</div>
+
+<div id="modal-chat-grupo" class="modal fade" tabindex="-1" role="dialog">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+        <h4 class="modal-title">Creación de grupo</h4>
+      </div>
+      <div class="modal-body">
+      	<div id="form-inputs" class="container-fluid">
+	      	<div class="form-group">
+	      	  <label for="chat-grupo-nombre">Nombre</label>
+	      	  <input type="text" class="form-control" id="chat-grupo-nombre" placeholder="Nombre de grupo" [(ngModel)]="formChatGrupo.nombre">
+	      	</div>
+
+	      	<div class="from-group">
+	      		<label for="chat-grupo-nombre">Listado de usuarios</label>
+	      		<hr>
+	      		<div id="chat-grupo-listado" class="container-fluid">
+					<div class="form-check" *ngFor="let usuario of formUsuarios">
+						<label *ngIf="usuario.tipo === 'chat'">
+							<input type="checkbox" name="chat_grupos_usuarios" [(ngModel)]="usuario.check">
+							<span class="label-text">{{ usuario.usuario }}</span>
+						</label>
+					</div>
+	      		</div>
+	      	</div>
+      	</div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-default" data-dismiss="modal">Cerrar</button>
+        <button type="button" class="btn btn-primary" (click)="crearChatGrupo()">Crear</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script type="text/javascript">
+	//   $(document).ready(function(){
+	//    $('[data-toggle="offcanvas"]').click(function(){
+	//         console.log('ocultar');
+	//        $("#columnag").toggleClass("hidden-xs");
+	//    });
+	// });
+
+	// document.getElementById("offcanvas").addEventListener("click", function( event ) {
+	//   // display the current click count inside the clicked div
+	//   console.log('ocultar');
+	//   //$("#columnag").toggleClass("hidden-xs");
+	// }, false);
+</script>
+<!-- [ngStyle]="{'visibility':activegrupo == 1 ? 'visible' : 'hidden' }" -->

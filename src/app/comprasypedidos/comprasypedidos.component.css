@@ -1,0 +1,41 @@
+select:required:invalid {
+    color: gray;
+}
+
+option[value=""][disabled] {
+    display: none;
+}
+
+option {
+    color: black;
+}
+
+.container-notify {
+    padding: 20px;
+}
+
+.notify {
+    /*padding: 20px;*/
+}
+
+.cla-box {
+    padding-top: 20px;
+    margin-bottom: 20px;
+    border: 2px dotted #99a3a5;
+}
+
+.SI {
+    text-decoration: line-through;
+}
+
+.NO {
+    text-decoration: none;
+}
+
+.btn-success, button.SI {
+    pointer-events: none;
+    cursor: default;
+    color: #fff;
+    background-color: #5cb85c;
+    border-color: #4cae4c;
+}

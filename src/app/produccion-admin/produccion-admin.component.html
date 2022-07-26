@@ -1,0 +1,63 @@
+<div id="app-asistencia-list" class="container">
+	<div class="col-sm-10 col-sm-offset-1">
+		<div class="col-sm-12 text-center">
+			<h2>
+				Listado de produccion
+			</h2>
+			<hr>
+		</div>
+
+		<div id="usuario-listado" class="col-sm-12">
+			<div class="form-horizontal">
+				<div class="col-sm-4 form-group">
+					<label class="control-label col-sm-4">Usuario: </label>
+					<div class="col-sm-8">
+						<select class="form-control" name="usuario" [(ngModel)]="form.usuario_id">
+							<option *ngFor="let usuario of usuarios" [value]="usuario.id">{{ usuario.usuario }}</option>
+						</select>
+					</div>
+				</div>
+
+				<div class="col-sm-6 form-group">
+					<label class="control-label col-sm-4"><span>Rango fecha</span></label>
+					<div class="col-sm-8">
+						<input type="text" class="form-control" daterangepicker name="fecha_fin"
+																															(selected)="selectedDate($event, daterange)"
+																															(applyDaterangepicker)="calendarApplied($event)"
+																															>
+					</div>
+				</div>
+
+				<div class="col-sm-2 form-group">
+					<button class="btn btn-sm btn-success" (click)="reloadAsistencias()">
+						<span class="glyphicon glyphicon-ok"></span>
+					</button>
+
+					<button class="btn btn-sm btn-default" (click)="resetForm()">
+						<span class="glyphicon glyphicon-refresh"></span>
+					</button>
+				</div>	
+			</div>
+			
+			<table class="table table-hover">
+				<thead>
+					<th>Usuario</th>
+					<th>Hs Trabajadas</th>
+					<th>Hs en Taller</th>
+					<th>Puntos</th>
+					<th>Cantidad de piezas</th>
+				</thead>
+
+				<tbody>
+					<tr *ngIf="data.usuario">
+						<td> {{ data.usuario }}</td>
+						<td> {{ data.horas_totales }}</td>
+						<td> {{ data.horas_taller }}</td>
+						<td> {{ data.puntos }}</td>
+						<td> {{ data.piezas }}</td>
+					</tr>
+				</tbody>
+			</table>
+		</div>
+	</div>
+</div>

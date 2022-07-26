@@ -1,0 +1,7 @@
+<!-- Client Select -->
+<div class="form-group">
+  <label for="mod" class="control-label">Mod:</label>
+  <select id="mod" class="form-control" [(ngModel)]="selectedMod" name="id" (ngModelChange)="onSelectMod($event)">
+    <option *ngFor="let mod of mods" [ngValue]="mod">{{ mod }}</option>
+  </select>
+</div>

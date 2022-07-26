@@ -1,0 +1,74 @@
+<div id="app-asistencia-list" class="container-fluid">
+  <div class="col-sm-10 col-sm-offset-1">
+    <div class="col-sm-12 text-center">
+      <h2>
+        Listado de presupuestos
+      </h2>
+      <hr>
+    </div>
+    <div class="col-sm-12" *ngIf="presupuestos.length > 0 ">
+      <ngx-datatable #tablaPresupuestos class="bootstrap" [columnMode]="'force'" [rows]="presupuestos"
+        [scrollbarH]="true" [rowHeight]="'auto'" [loadingIndicator]="loadingIndicator" [headerHeight]="50"
+        rowHeight="auto">
+        <ngx-datatable-column name="Nombre">
+          <ng-template let-row="row" style="border-left: 1px solid #d1d4d7;" ngx-datatable-cell-template>
+            <strong>{{row.nombre}}</strong>
+          </ng-template>
+        </ngx-datatable-column>
+        <ngx-datatable-column name="Telefono">
+          <ng-template let-row="row" style="border-left: 1px solid #d1d4d7;" ngx-datatable-cell-template>
+            <strong>{{ row.telefono }} </strong>
+          </ng-template>
+        </ngx-datatable-column>
+        <ngx-datatable-column name="Direccion">
+          <ng-template let-row="row" style="border-left: 1px solid #d1d4d7;" ngx-datatable-cell-template>
+            <strong>{{ row.direccion }} </strong>
+          </ng-template>
+        </ngx-datatable-column>
+
+        <ngx-datatable-column name="Link del proyecto">
+          <ng-template let-row="row" style="border-left: 1px solid #d1d4d7;" ngx-datatable-cell-template>
+            <strong style="color: blue; cursor: pointer;" (click)="newWindow(row)"> Link</strong>
+          </ng-template>
+        </ngx-datatable-column>
+        <ngx-datatable-column name="Usuario de recepción">
+          <ng-template let-row="row" style="border-left: 1px solid #d1d4d7;" ngx-datatable-cell-template>
+            <strong>{{row.usuario}}</strong>
+          </ng-template>
+        </ngx-datatable-column>
+        <ngx-datatable-column name="Comentario resumen">
+          <ng-template let-row="row" style="border-left: 1px solid #d1d4d7;" ngx-datatable-cell-template>
+            <strong>{{row.comentarioResumen}}</strong>
+          </ng-template>
+        </ngx-datatable-column>
+        <ngx-datatable-column name="Fecha" [width]="80">
+          <ng-template let-row="row" style="border-left: 1px solid #d1d4d7;" ngx-datatable-cell-template>
+            <strong>{{row.fecha|date:'dd/MM/yyyy'}}</strong>
+          </ng-template>
+        </ngx-datatable-column>
+        <ngx-datatable-column name="PDF" [width]="40">
+          <ng-template let-row="row" style="border-left: 1px solid #d1d4d7;" ngx-datatable-cell-template>
+            <button class="btn btn-sm btn-primary" [disabled]="row.estado == 1" (click)="verPdf(row)">
+              <span class="fa fa-file-o"></span>
+            </button>
+          </ng-template>
+        </ngx-datatable-column>
+        <ngx-datatable-column name="PDF-link" [width]="40">
+          <ng-template let-row="row" style="border-left: 1px solid #d1d4d7;" ngx-datatable-cell-template>
+            <button class="btn btn-sm btn-primary" [disabled]="row.estado == 1" (click)="CopyPDFURL(row)">
+              <span class="fa fa-link"></span>
+            </button>
+          </ng-template>
+        </ngx-datatable-column>
+        <ngx-datatable-column name="Estado" [width]="50">
+          <ng-template let-row="row" style="border-left: 1px solid #d1d4d7;" ngx-datatable-cell-template>
+            <span class="badge"
+              [ngClass]="row.estado == 1? 'badge-primary' : 'badge-success'">{{row.estado == 1 ? 'A cotizar' : 'Enviado'}}
+            </span>
+          </ng-template>
+        </ngx-datatable-column>
+      </ngx-datatable>
+    </div>
+
+  </div>
+</div>

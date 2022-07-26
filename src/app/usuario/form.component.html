@@ -1,0 +1,74 @@
+<div id="app-usuario-form" class="container-fluid">
+	<div id="" class="col-sm-12">
+		<ng-container *ngIf="messages.length > 0">
+			<div *ngFor="let message of messages" class="alert alert-{{ message.type }}">
+				<button *ngIf="!message.keep" type="button" class="close" data-dismiss="alert" aria-label="Close">
+					<span aria-hidden="true">&times;</span>
+				</button>
+				{{ message.message }}
+			</div>
+		</ng-container>
+
+		<form id="form-usuario" class="form-horizontal" action="#!" method="post">
+			<div class="form-group">
+				<label class="control-label col-sm-4" for="nombre_completo">Nombre completo</label>
+				<div class="col-sm-8">
+					<input id="nombre_completo" class="form-control" name="nombre_completo" type="text" [(ngModel)]="usuario.nombre_completo">
+				</div>
+			</div>
+
+			<div class="form-group">
+				<label class="control-label col-sm-4" for="usuario">Usuario</label>
+				<div class="col-sm-8">
+					<input id="usuario" class="form-control" name="usuario" type="text" [(ngModel)]="usuario.usuario">
+				</div>
+			</div>
+
+			<div class="form-group">
+				<label class="control-label col-sm-4" for="password">Contraseña</label>
+				<div class="col-sm-8">
+					<input id="password" class="form-control" name="password" type="password" [(ngModel)]="password.password">
+				</div>
+			</div>
+
+			<div class="form-group">
+				<label class="control-label col-sm-4" for="password_confirmation">Confirmar contraseña</label>
+				<div class="col-sm-8">
+					<input id="password_confirmation" name="password_confirmation" class="form-control" type="password" [(ngModel)]="password.password_confirmation">
+				</div>
+			</div>
+
+			<div class="form-group">
+				<label class="control-label col-sm-4" for="correo_google">Correo Google</label>
+				<div class="col-sm-8">
+					<input id="correo_google" class="form-control" name="correo_google" type="text" [(ngModel)]="usuario.correo_google">
+				</div>
+			</div>
+
+			<div class="form-group">
+				<label class="control-label col-sm-4" for="rol">Rol</label>
+				<div class="col-sm-8">
+					<select id="rol" class="form-control" name="rol" [(ngModel)]="usuario.rol_id">
+						<option *ngFor="let rol of roles" [value]="rol.id">{{ rol.rol }}</option>
+					</select>
+				</div>
+			</div>
+
+			<div class="form-group">
+				<label class="control-label col-sm-4" for="activo">Activo</label>
+				<div class="col-sm-8">
+					<select id="activo" class="form-control" name="activo" [(ngModel)]="usuario.activo">
+						<option *ngFor="let estado of estados" [value]="estado.value">{{ estado.estado }}</option>
+					</select>
+				</div>
+			</div>
+			<!-- <div class="form&#45;group"> -->
+				<!-- 	<label class="control&#45;label col&#45;sm&#45;3" for="usuario">Usuario</label> -->
+				<!-- 	<div class="col&#45;sm&#45;8"> -->
+					<!-- 		<input id="usuario" class="form&#45;control" type="text" [(ngModel)]="usuario.usuario"> -->
+					<!-- 	</div> -->
+				<!-- </div> -->
+		</form>
+	</div>
+
+</div>

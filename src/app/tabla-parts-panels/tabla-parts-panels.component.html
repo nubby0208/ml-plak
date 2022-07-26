@@ -1,0 +1,39 @@
+  <div class="row">
+    <div class="col-md-12">
+
+      <div class="checkbox">
+        <label>
+            <input type="checkbox" [checked]="filterData" (change)="onFilterDataChange()" />
+            Mostrar solo filas a completar
+        </label>          
+      </div>
+      
+      <!-- Tabla de Partes y Paneles -->  
+      <div *ngIf="table" class="table-responsive">
+        <table id="parts-panels-table" class="table table-condensed table-hover table-nowrap text-center">
+          <thead>
+            <tr>
+              <th class="text-center">Nombre</th>
+              <th class="text-center">Largo [mm]</th> 
+              <th class="text-center">Ancho [mm]</th>
+              <th class="text-center">Cantidad</th>
+              <th class="text-center">Puede Rotarse</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let row of table">
+              <td *ngFor="let cell of row">
+                <input *ngIf="cell.editable" #icell
+                (keyup.enter)="updateCell(cell, icell)"
+                (blur)="updateCell(cell, icell)"
+                [value]="cell.value"
+                type="number">
+                <span *ngIf="!cell.editable">{{ cell.value }}</span>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+      
+    </div>
+  </div>

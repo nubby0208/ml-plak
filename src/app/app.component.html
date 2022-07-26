@@ -1,0 +1,143 @@
+<!-- Fixed navbar -->
+
+<ngx-ui-loader></ngx-ui-loader>
+<div ngxUiLoaderBlurred blur="10">
+  <!-- This page content will be blurred/frosted when foreground loader is showed -->
+
+  <nav class="navbar navbar-default" id="navbar-menu">
+    <div id="header-container">
+
+      <!-- Navbar Brand & Toggle -->
+      <div class="navbar-header">
+        <button *ngIf="logged()" type="button" class="navbar-toggle collapsed" data-toggle="collapse"
+          data-target="#navbar" aria-expanded="false" aria-controls="navbar">
+          <span class="sr-only">Toggle navigation</span>
+          <span class="icon-bar"></span>
+          <span class="icon-bar"></span>
+          <span class="icon-bar"></span>
+        </button>
+        <a class="navbar-brand" routerLink="/">ML PLAK</a>
+      </div>
+
+      <!-- Navbar Menu -->
+
+      <div *ngIf="logged()" div id="navbar" class="navbar-collapse collapse">
+        <ul class="nav navbar-nav">
+          <li data-toggle="collapse" data-target=".navbar-collapse.in">
+            <a href="//mlplak.com/disenio" target="_blank">Centro de Diseño</a>
+          </li>
+          <!--<li data-toggle="collapse" data-target=".navbar-collapse.in">
+          <a routerLink="/compras-y-pedidos">Compras y Pedidos</a>
+        </li>-->
+          <li data-toggle="collapse" data-target=".navbar-collapse.in">
+            <a routerLink="/taller">Taller</a>
+          </li>
+          <li data-toggle="collapse" data-target=".navbar-collapse.in">
+            <a routerLink="/presupuestos">Presupuestos</a>
+          </li>
+          <li data-toggle="collapse" data-target=".navbar-collapse.in" class="Calendario">
+            <a routerLink="/Calendario">Calendario</a>
+          </li>
+          <li data-toggle="collapse" data-target=".navbar-collapse.in">
+            <div class="popover__wrapper">
+              <a routerLink="/Mensajes">
+                <div class="popover__title popover__title-padding-less" style="color: #777;">
+                  Mensajes
+                  <span class="badge badge-warning ">{{countmennovistos}}</span>
+                </div>
+              </a>
+              <div class="push popover__content popover__content-custom">
+                <div class="alert alert-success" role="alert">
+                  Mensajes de chat {{countmenchat}}
+                </div>
+                <div class="alert alert-success" role="alert">
+                  Mensajes en grupos {{countmengruo}}
+                </div>
+              </div>
+            </div>
+          </li>
+          <li data-toggle="collapse" data-target=".navbar-collapse.in">
+            <a routerLink="/asistencia">Asistencia</a>
+          </li>
+          <li data-toggle="collapse" data-target=".navbar-collapse.in">
+            <a routerLink="/tareas">Tareas</a>
+          </li>
+          <li data-toggle="collapse" data-target=".navbar-collapse.in">
+            <a routerLink="/miproduccion">Mi Produccion</a>
+          </li>
+          <ng-template [ngxPermissionsOnly]="['Administrador']">
+            <li data-toggle="collapse" data-target=".navbar-collapse.in">
+              <a routerLink="/admin/produccion">+ Info (Produccion)</a>
+            </li>
+          </ng-template>
+        </ul>
+
+        <ul class="nav navbar-nav navbar-right">
+          <ng-template [ngxPermissionsOnly]="['Administrador']">
+            <li class="dropdown">
+              <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true"
+                aria-expanded="false" style="paddin-top: 13px; padding-bottom: 8px">
+                <span class="glyphicon glyphicon-cog" style="font-size: 1.6em"></span>
+              </a>
+              <ul class="dropdown-menu">
+                <li data-toggle="collapse" data-target=".navbar-collapse.in">
+                  <a routerLink="/admin/usuario">Usuarios</a>
+                </li>
+                <li data-toggle="collapse" data-target=".navbar-collapse.in">
+                  <a routerLink="/admin/grupos">Grupos</a>
+                </li>
+                <li data-toggle="collapse" data-target=".navbar-collapse.in">
+                  <a routerLink="/admin/asistencia">Asistencia</a>
+                </li>
+                <li data-toggle="collapse" data-target=".navbar-collapse.in">
+                  <a routerLink="/admin/auditoria">Auditoria</a>
+                </li>
+                <li data-toggle="collapse" data-target=".navbar-collapse.in">
+                  <a routerLink="/admin/horario">Horarios</a>
+                </li>
+                <li data-toggle="collapse" data-target=".navbar-collapse.in">
+                  <a routerLink="/admin/material">Materiales</a>
+                </li>
+                <li data-toggle="collapse" data-target=".navbar-collapse.in">
+                  <a routerLink="/admin/proyecto">Proyectos</a>
+                </li>
+                <li data-toggle="collapse" data-target=".navbar-collapse.in">
+                  <a routerLink="/admin/maquinas">Maquinas</a>
+                </li>                
+                <li data-toggle="collapse" data-target=".navbar-collapse.in">
+                  <a routerLink="/admin/capacidadproduccion">Capacidad de Produccion</a>
+                </li>
+                <li data-toggle="collapse" data-target=".navbar-collapse.in">
+                  <a routerLink="/admin/tiempotraslados">Tiempo de Traslados</a>
+                </li>                                
+                <li data-toggle="collapse" data-target=".navbar-collapse.in">
+                  <a routerLink="/images/admin">Administrador de Imagenes</a>
+                </li>
+                <li data-toggle="collapse" data-target=".navbar-collapse.in">
+                  <a routerLink="/admin/respaldo">Respaldos</a>
+                </li>
+                <li data-toggle="collapse" data-target=".navbar-collapse.in">
+                  <a routerLink="/admin/reportes">Reportes</a>
+                </li>
+              </ul>
+            </li>
+          </ng-template>
+
+          <li class="dropdown">
+            <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true"
+              aria-expanded="false">
+              {{ authService.getUsuario()?.usuario }} <span class="caret"></span>
+            </a>
+            <ul class="dropdown-menu">
+              <li data-toggle="collapse" data-target=".navbar-collapse.in">
+                <a href="#" (click)="onLogout()">Salir</a>
+              </li>
+            </ul>
+          </li>
+        </ul>
+      </div>
+    </div>
+  </nav>
+
+  <router-outlet></router-outlet>
+</div>

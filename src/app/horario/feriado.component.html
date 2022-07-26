@@ -1,0 +1,24 @@
+<div id="app-feriado-form" class="container-fluid">
+	<div id="" class="col-sm-12">
+		<ng-container *ngIf="messages.length > 0">
+			<div *ngFor="let message of messages" class="alert alert-{{ message.type }}">
+				<button *ngIf="!message.keep" type="button" class="close" data-dismiss="alert" aria-label="Close">
+					<span aria-hidden="true">&times;</span>
+				</button>
+				{{ message.message }}
+			</div>
+		</ng-container>
+
+		<form id="form-feriado" class="form-horizontal" action="#!" method="post">
+
+			<div class="form-group">
+				<label class="control-label col-sm-4" for="fecha">Fecha</label>
+				<div class="col-sm-8">
+					<input id="fecha" class="form-control" name="fecha" type="date" [(ngModel)]="feriado.fecha">
+				</div>
+			</div>
+
+		</form>
+	</div>
+
+</div>

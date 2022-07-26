@@ -1,0 +1,25 @@
+#table {
+  white-space: nowrap;
+  padding: 1px 6px;
+}
+
+:host /deep/ table button {
+  padding: 1px 6px;
+}
+
+:host /deep/ td {
+  padding: 2px !important;
+}
+
+:host /deep/ th {
+  background-color: #337ab7;
+  color: white;
+}
+
+:host /deep/ th.table-ok {
+  background-color: #1fa15d;
+}
+
+:host /deep/ th.table-remaining {
+  background-color: #e06666;
+}

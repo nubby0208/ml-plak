@@ -1,0 +1,146 @@
+<br>
+
+<br>
+<br>
+<div class="container">
+
+	<div class="col-xs-12" >
+			<div class="form-group" style="text-align:center;">
+		  		<label class="control-label" for="inputSuccess2">Seleccione Proyecto </label>
+		  		<select class="form-control"   name="proyectoCLie" [(ngModel)]="proyectoCLie" id="proyectoCLie" >
+		  			<option *ngFor="let title of clients; let i = index" [value]="'[&'+i+'&,'+'&'+title.imageFolderLink+'&,&'+title.clientDetailId+'&,&'+title.name+'&]'">  {{title.name}} </option>
+				</select>
+			</div>
+		</div>
+	
+</div>
+<br>
+
+<br>
+<div class="container">
+	<div class="row">
+		<div class="col-xs-4" style="text-align:center;">
+			<button type="button" style="text-align:center; width: 100%;" class="btn btn-primary btn-lg " (click)="getdetails(proyectoCLie,'B')">Info Basica
+			</button>
+		</div>
+		<div class="col-xs-4" style="text-align:center;">
+			<button  type="button" style="text-align:center; width: 100%;" class="btn btn-primary btn-lg" (click)="getdetails(proyectoCLie,'D')">Info Detallada
+			</button>
+		</div>
+		<div class="col-xs-4" style="text-align:center;">
+			<button type="button" style="text-align:center; width: 100%;" class="btn btn-primary btn-lg " (click)="getdetails(proyectoCLie,'C')">Info completa con lista de piezas
+			</button>
+		</div>
+	</div>
+
+</div>
+
+<br>
+
+<div id="imprimir" class="container">
+	<br>
+	<br>
+	<div id="imegenes">
+	<div class="row">
+		<div *ngFor="let imgenn of arrimgen" style="width: 20%; display: inline-block;">
+			<img src="{{imgenn.src}}" width="100%"  alt="">
+		</div>
+	</div>
+	<hr>
+	<div class="row" >
+		<h2>Resumen</h2>
+	</div>
+	<table width="100%" border="1" >
+	  <tr>
+	    <td>{{nomApellido}}</td>
+	    <td>{{RespnomApellido}}</td>
+	  </tr>
+	  <tr>
+	    <td>{{Direccion}}</td>
+	    <td>{{RespDireccion}}</td>
+	  </tr>
+	  <tr>
+	    <td>{{Telefono}}</td>
+	    <td>{{RespTelefono}}</td>
+	  </tr>
+	  <tr>
+	    <td>{{Mueble}}</td>
+	    <td>{{RespMueble}}</td>
+	  </tr>
+	  <tr>
+	    <td>{{Total}}</td>
+	    <td>{{RespTotal}}</td>
+	  </tr>
+	  <tr>
+	    <td>{{Sena}}</td>
+	    <td>{{RespSena}}</td>
+	  </tr>
+	  <tr>
+	    <td>{{SaldoPen}}</td>
+	    <td>{{RespSaldoPen}}</td>
+	  </tr>
+	  <tr>
+	    <td>{{fchainst}}</td>
+	    <td>{{Respfchainst}}</td>
+	  </tr>
+	  <tr>
+	    <td>{{horadeinst}}</td>
+	    <td>{{Resphoradeinst}}</td>
+	  </tr>
+	  <tr>
+	    <td>{{comentarioInsta}}</td>
+	    <td>{{RespcomentarioInsta}}</td>
+	  </tr>
+	</table>
+	</div>
+<br>
+<br>
+<div class="row" >
+	<h2>Detalle </h2>
+</div>
+	
+<table width="100%" border="0" class="table theadr" >
+	<thead>
+    	<th >N</th>
+		<th >CANT</th>
+		<th >Pieza</th>
+		<th >MOD</th>
+		<th >EXTRA1</th>
+		<th >EXTRA2</th>
+		<th >EXTRA3</th>
+		<th >EXTRA4</th>
+		<th >LVETA</th>
+		<th >AVETA</th>
+		<th >EXTRA5</th>
+		<th >EXTRA6</th>
+		<th >EXTRA7</th>
+		<th >EXTRA8</th>
+		<th >MATERIAL</th>
+	
+	</thead>
+	<tbody *ngFor="let headerds of headerdataInfo">
+	<tr>
+		<td >{{headerds.N}}</td>
+		<td >{{headerds.CANT}}</td>
+		<td >{{headerds.Pieza}}</td>
+		<td >{{headerds.MOD}}</td>
+		<td >{{headerds.EXTRA1}}</td>
+		<td >{{headerds.EXTRA2}}</td>
+		<td >{{headerds.EXTRA3}}</td>
+		<td >{{headerds.EXTRA4}}</td>
+		<td >{{headerds.LVETA}}</td>
+		<td >{{headerds.AVETA}}</td>
+		<td >{{headerds.EXTRA5}}</td>
+		<td >{{headerds.EXTRA6}}</td>
+		<td >{{headerds.EXTRA7}}</td>
+		<td >{{headerds.EXTRA8}}</td>
+		<td >{{headerds.MATERIAL}}</td>
+		
+	</tr> 
+	</tbody>
+</table>
+
+<br>
+<br>
+
+</div>

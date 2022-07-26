@@ -1,0 +1,20 @@
+textarea {
+    resize: none;
+  }
+
+  .badge-success{
+    background: green;
+}
+
+.badge-danger {
+    background: orange;
+}
+
+.datatable-pager a{
+  color: black !important;
+}
+
+.salto-linea{
+  white-space: break-spaces;
+}
+

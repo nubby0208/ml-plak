@@ -1,0 +1,207 @@
+<div class="container-fluid">
+	<div class="col-sm-12 text-center">
+		<h2>Panel de Administración de Imágenes</h2>
+		<hr>
+	</div>
+</div>
+
+<div class="container-fluid" style="">
+	<div class="col-md-10 col-md-offset-1 form-horizontal">
+		<label for="filter-pieza" class="col-sm-4 control-label">Filtrar Proyectos</label>
+		<div class="col-sm-6">
+		  <input id="filter-pieza" class="form-control" type="text" [(ngModel)]="inputFiltered" (input)="onChangeFilterProject($event.target.value)">
+	  </div>
+	</div>
+
+	<div class="col-md-10 col-md-offset-1">
+		<hr>
+	</div>
+
+	<div class="col-md-10 col-md-offset-1">
+		<table class="table">
+			<thead>
+				<tr>
+					<th>#</th>
+					<th (click)="onSortBy('nombre_completo', sortMode*(-1))" class="th-pointer">Proyecto <span class="glyphicon" [ngClass]="fnSortClassNombreCliente()"></span></th>
+					<th (click)="onSortBy('created_at', sortMode*(-1))" class="th-pointer">Fecha de creación <span class="glyphicon" [ngClass]="fnSortClassCreatedAt()"></span></th>
+					<th>Opciones</th>
+				</tr>
+			</thead>
+			<tbody>
+				<ng-container *ngIf="proyectos.length > 0; else elseProyectos">
+					<tr *ngFor="let proyecto of proyectos; index as index" [hidden]="!proyecto.show">
+						<td>{{ index+1 }}</td>
+						<td><strong>{{ proyecto.cliente.nombre_completo }}</strong> {{ proyecto.proyecto }}</td>
+						<td>{{ proyecto.created_at }}</td>
+						<td>
+							<button class="btn btn-primary btn-sm glyphicon glyphicon-th-large" (click)="showModalImagenes($event, proyecto, proyecto.token_project)">
+							</button>
+							<button class="btn btn-danger btn-sm glyphicon glyphicon-trash" (click)="assign2Remove(proyecto) + confirmationRemoveAll.show()">
+							</button>
+						</td>
+					</tr>
+				</ng-container>
+
+				<ng-template #elseProyectos>
+					<tr>
+						<td colspan="4" class="text-center"><strong>No existen proyectos con imágenes</strong></td>
+					</tr>
+				</ng-template>
+			</tbody>
+			<tfoot>
+				<tr>
+					<th colspan="4" class="text-center">
+						<nav aria-label="Page navigation">
+							<ul class="pagination">
+								<li>
+									<a href="javascript:void(0)" aria-label="Previous" (click)="pagPrev()">
+										<span aria-hidden="true">&laquo;</span>
+									</a>
+								</li>
+
+								<ng-container *ngFor="let ind of [].constructor(pagOptions.sections); let i = index">
+									<li [ngClass]="{active: pagOptions.active === i}">
+										<a href="javascript:void(0)" (click)="pagChange(i)">{{ i+1 }}</a>
+									</li>
+								</ng-container>
+
+								<li>
+									<a href="javascript:void(0)" aria-label="Next" (click)="pagNext()">
+										<span aria-hidden="true">&raquo;</span>
+									</a>
+								</li>
+							</ul>
+						</nav>
+					</th>
+				</tr>
+			</tfoot>
+		</table>
+	</div>
+</div>
+
+<div *ngIf="0" class="container row center-block" style="padding-top: 50px;">
+	<div class="panel panel-primary col-10">
+	  <div class="panel-heading"><h3 class="panel-title">Administracion de Images</h3>
+	  </div>
+	  <div class="panel-body"> 
+	  	<div *ngIf="loader"><p style="display: inline; color: blue;">Cargando Imagenes por Favor Espere... </p>
+	  		<img src="{{base64_loader}}">
+	  	</div>
+	  	<div *ngFor="let folder of all_folders; index as id_folder" class="panel panel-default" >
+				<div *ngIf="folder.show" class="panel-heading"><b>{{ folder.client_project | uppercase }}</b><span class="remove-all" title="Remover Todas las Imagenes del Proyecto" (click)="AsignarValores(id_folder, 0, '') + confirmationDeleteImageAll.show()">X</span></div>
+				<div class="panel-body" *ngIf="folder.show">
+					<div  *ngFor="let image of folder.images; index as id_img">
+				    <div class="image_wrapper">
+				    	<img class="img-responsive image" src="{{ image.src }}" style="padding: 5px; width: 150px; height: 150px">
+				    	<button title="Remover Imagen" (click)="AsignarValores(id_folder, id_img, image.file) + confirmationDeleteImage.show()" class="btn-xs-danger remove">X</button>
+				    </div>
+					</div>
+				</div>  
+			</div>
+	  </div> 
+	</div>
+</div>
+
+<div id="modal-proyecto-imagenes" class="modal fade" tabindex="-1">
+	<div class="modal-dialog modal-lg">
+		<div class="modal-content">
+			<div class="modal-header">
+				<button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+				<h4 class="modal-title">Galería: <strong>{{ proyectoImagenes.proyecto.cliente?.nombre_completo || '' }}</strong> {{ proyectoImagenes.proyecto?.proyecto || '' }}</h4>
+			</div>
+
+			<div class="modal-body">
+				<div class="container-fluid">
+					<div class="loading-area" *ngIf="loadingThumbnails; else elseLoadingThumbnails">
+						<div>
+							<img [src]="urlOrigin+'assets/img/spinner.gif'"/>
+						</div>
+					</div>
+
+					<ng-template #elseLoadingThumbnails>
+						<ng-container *ngIf="imageShow">
+							<div id="carousel-example-generic" class="carousel slide" data-ride="carousel">
+								<ol class="carousel-indicators">
+									<ng-container *ngFor="let imagen of proyectoImagenes.imagenes; let i = index">
+										<li data-target="#carousel-example-generic" [attr.data-slide-to]="i" [ngClass]="{active: (i === posCarousel)}"></li>
+									</ng-container>
+								</ol>
+
+								<div class="carousel-inner" role="listbox">
+									<ng-container *ngFor="let imagen of proyectoImagenes.imagenes; let i = index">
+										<div class="item" [ngClass]="{active: (i === posCarousel)}">
+											<img [src]="imagen.src" class="img-responsive" alt="Imagen de galería" (click)="hideImage()">
+										</div>
+									</ng-container>
+								</div>
+
+								<a class="left carousel-control" href="#carousel-example-generic" role="button" data-slide="prev">
+									<span class="glyphicon glyphicon-chevron-left" aria-hidden="true"></span>
+									<span class="sr-only">Previous</span>
+								</a>
+
+								<a class="right carousel-control" href="#carousel-example-generic" role="button" data-slide="next">
+									<span class="glyphicon glyphicon-chevron-right" aria-hidden="true"></span>
+									<span class="sr-only">Next</span>
+								</a>
+							</div>
+
+							<!-- <div class="image&#45;only"> -->
+							<!-- 	<img [src]="imageShow.src" class="img&#45;responsive" alt="Imagen de galería" (click)="hideImage()"> -->
+							<!-- </div> -->
+						</ng-container>
+
+						<ng-container *ngIf="!imageShow && proyectoImagenes.imagenes">
+							<div *ngFor="let imagen of proyectoImagenes.imagenes; let i = index" class="col-xs-6 col-md-3 col-image">
+								<a class="thumbnail image_wrapper">
+									<img [src]="imagen.src" alt="Imagen número {{ i }} de galería" (click)="selectImage(i)">
+									<button title="Remover imagen" (click)="assign2Remove(i, 'imagen') + confirmationRemoveOne.show()" class="btn-xs-danger remove">X</button>
+								</a>
+							</div>
+						</ng-container>
+					</ng-template>
+				</div>
+			</div>
+
+			<div class="modal-footer">
+				<button type="button" class="btn btn-default" data-dismiss="modal">Cerrar</button>
+			</div>
+		</div>
+	</div>
+</div>
+
+<swal
+	#confirmationDeleteImage
+	title="¿Confirma que Desea Eliminar esta Imagen del Servidor?"
+	text="La imagen Sera Borrada de manera Permanente"
+  type="question"
+  [options]="{showCancelButton: true}"
+  (confirm)="handlerSwalImage($event)"
+></swal>
+
+<swal
+	#confirmationDeleteImageAll
+	title="¿confirma que desea eliminar todas las imagenes del proyecto?"
+	text="las imagenes seran borradas de manera permanente"
+  type="question"
+  [options]="{showcancelbutton: true}"
+  (confirm)="handlerRemoveAllImages($event)"
+></swal>
+
+<swal
+	#confirmationRemoveAll
+	title="¿Desea eliminar todas las imágenes del proyecto?"
+	text="Las imágenes serán borradas de manera permanente"
+  type="question"
+  [options]="{showCancelButton: true}"
+  (confirm)="handlerRemoveAll($event)"
+></swal>
+
+<swal
+	#confirmationRemoveOne
+	title="¿Desea eliminar esta imagen"
+	text="La imagen será borrada de manera permanente"
+  type="question"
+  [options]="{showCancelButton: true}"
+  (confirm)="handlerRemoveOne($event)"
+></swal>

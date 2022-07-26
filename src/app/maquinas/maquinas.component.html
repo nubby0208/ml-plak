@@ -1,0 +1,126 @@
+<div id="app-capacidad-produccion" class="container">
+  <div class="col-sm-10 col-sm-offset-1">
+    <div class="col-sm-12 text-center">
+      <h2>
+        Maquinas
+        <button type="button" class="btn btn-xs btn-success" (click)="openAddEditMaquinaModal()">
+          <span class="glyphicon glyphicon-plus"></span>
+          Nuevo
+        </button>
+      </h2>
+      <hr>
+    </div>
+
+    <div class="img-loader-spinner" *ngIf="loading">
+      <div class="img-loader">
+        <div>
+        </div>
+      </div>
+    </div>
+
+    <div id="maquinas" class="col-sm-12">
+      <div id="material-listado" class="col-sm-12">
+        <table class="table table-hover">
+          <thead>
+            <th>#</th>
+            <th>Nombre</th>
+            <th>Estado</th>
+            <th>Conexion</th>
+            <th style="text-align: right; min-width: 80px">Acciones</th>
+          </thead>
+
+          <tbody>
+            <ng-container *ngIf="(maquinas && maquinas.length); else emptyMaquinas">
+              <tr *ngFor="let maquina of maquinas; let i = index">
+                <td>{{ i+1 }}</td>
+                <td>{{ maquina.nombre }}</td>
+                <td>{{ maquina.estado }}</td>
+                <td>{{ maquina.conexion}}</td>
+                <td style="text-align: right; min-width: 80px">
+                  <button class="btn btn-xs btn-warning" (click)="edit(i)"><span
+                      class="glyphicon glyphicon-pencil"></span></button>
+                  <button class="btn btn-xs btn-danger" (click)="openDeleteMaquinaModal(i)"><span
+                      class="glyphicon glyphicon-trash"></span></button>
+                </td>
+              </tr>
+            </ng-container>
+
+            <ng-template #emptyMaquinas>
+              <tr>
+                <td class="text-center" colspan="17"><strong>No posee maquinas</strong></td>
+              </tr>
+            </ng-template>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <div id="add-edit-maquina" class="modal fade" tabindex="-1">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span
+              aria-hidden="true">&times;</span></button>
+          <h4 class="modal-title">{{editing ?' Nueva Maquina' : 'Editar Maquina'}}</h4>
+        </div>
+        <div class="modal-body">
+          <div id="app-maquina-form" class="container-fluid">
+            <div class="col-sm-12">
+              <form id="form-maquina" class="form-horizontal" [formGroup]="maquinaForm" autocomplete="off">
+                <div class="form-group">
+                  <label class="control-label col-sm-4" for="nombre">Nombre</label>
+                  <div class="col-sm-8">
+                    <input id="nombre" class="form-control" name="nombre" type="text" formControlName="nombre">
+                  </div>
+                </div>
+
+                <div class="form-group">
+                  <label class="control-label col-sm-4" for="estado">Estado</label>
+                  <div class="col-sm-8">
+                    <input id="estado" class="form-control" name="estado" type="text" formControlName="estado">
+                  </div>
+                </div>
+
+                <div class="form-group">
+                  <label class="control-label col-sm-4" for="url">Conexion</label>
+                  <div class="col-sm-8">
+                    <input id="url" class="form-control" name="url" type="text" formControlName="conexion">
+                  </div>
+                </div>
+              </form>
+            </div>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-default" (click)="closeAddEditMaquinaModal()">Cancelar</button>
+          <button type="button" class="btn btn-success" [disabled]="!maquinaForm.valid || !maquinaForm.dirty"
+            (click)="saveMaquina()">Guardar</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div id="delete-maquina" class="modal fade" tabindex="-1">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span
+              aria-hidden="true">&times;</span></button>
+          <h4 class="modal-title">Borrar Maquina</h4>
+        </div>
+        <div class="modal-body">
+          <div id="app-maquina-form" class="container-fluid">
+            <div class="col-sm-12">
+              <p>¿Esta seguro que desea borrar la maquina <strong>{{maquinaToDelete?.nombre}}</strong>?</p>
+            </div>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-default" (click)="closeDeleteMaquinaModal()">Cancelar</button>
+          <button type="button" class="btn btn-danger" (click)="delete()">Borrar</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

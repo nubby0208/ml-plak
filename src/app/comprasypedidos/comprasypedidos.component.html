@@ -1,0 +1,149 @@
+<br>
+<br>
+<div class="container">
+	<h4>Compras y Pedidos</h4>
+</div>
+<br>
+<br>
+
+<div class="container">
+	<div class="notify">
+		<div *ngIf="displaydata" class="alert alert-success" role="alert">{{mensaje}}</div>
+		<div *ngIf="displaydataerr" class="alert alert-danger" role="alert">Error al insertar datos (Faltan campos)</div>
+	</div>
+
+	<div class="row">
+		<div class="col-xs-12">
+			<button type="button" class="btn btn-primary pull-right" data-toggle="modal" data-target="#myModal">Ver compras registradas</button>
+		</div>
+	</div>
+
+</div>	
+<div class="container">
+	<form name="ComprasYpedidos" #ComprasYpedidos="ngForm">
+	<div class="row">
+		<div class="col-xs-3">
+			<div class="form-group">
+		  		<label class="control-label" for="inputSuccess2">Cantidad</label>
+		  		
+		  		<select class="form-control" name="cantidad" [(ngModel)]="cantidad" id="cantidad">
+					<option value="1">1</option>
+					<option value="2">2</option>
+					<option value="3">3</option>
+					<option value="4">4</option>
+					<option value="5">5</option>
+					<option value="6">6</option>
+					<option value="7">7</option>
+					<option value="8">8</option>
+					<option value="9">9</option>
+					<option value="10">10</option>
+				</select>
+			</div>
+		</div>
+		<div class="col-xs-9">
+			<div class="form-group">
+		  		<label class="control-label" for="inputSuccess2">Producto</label>
+		  		<input type="text" class="form-control" name="producto" [(ngModel)]="producto" id="producto" >
+			</div>
+		</div>
+	</div>
+	<div class="row">
+		<div class="col-xs-12">
+			<div class="form-group">
+		  		<label class="control-label" for="inputSuccess2">Descripcion extra </label>
+		  		<textarea class="form-control" rows="3" name="descripcion" [(ngModel)]="descripcion" id="descripcion"></textarea>
+		  		
+			</div>
+		</div>
+	</div>
+	<div class="row">
+		<div class="col-xs-4">
+			<div class="form-group">
+		  		<label class="control-label" for="inputSuccess2">Urgencia </label>
+		  		<select class="form-control" name="urgencia" [(ngModel)]="urgencia" id="urgencia">
+					<option value="A">ALTA</option>
+					<option value="B">BAJA</option>
+					<option value="M">MEDIA</option>
+				</select>
+		  		
+			</div>
+		</div>
+		<div class="col-xs-4">
+			<div class="form-group">
+		  		<label class="control-label" for="inputSuccess2">Para que cliente? </label>
+		  		<select class="form-control"   name="pqcliente" [(ngModel)]="pqcliente" id="pqcliente">
+		  			<option *ngFor="let title of inClientes" [value]="title.name">  {{title.name}} </option>
+				</select>
+			</div>
+		</div>
+		<div class="col-xs-4">
+			<div class="form-group">
+		  		<label class="control-label" for="inputSuccess2">Pedido por? </label>
+		  		
+		  		<select class="form-control"   name="pedidopor" [(ngModel)]="pedidopor" id="pedidopor">
+		  			
+		  			<option *ngFor="let User of formUsers" [value]="User.usuario">  {{User.usuario}} </option>
+					
+				</select>
+			</div>
+		</div>
+	</div>
+	
+	<div class="row">
+		<div class="col-xs-12">
+			<div class="pull-right">
+	            <button type="button" class="btn btn-primary" (click)="guardarDtaa()">Registrar Compra</button>
+	            
+	        </div>
+        </div>
+		
+	</div>
+	</form>
+	<!-- Large modal -->
+
+
+<div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+  <div class="modal-dialog  modal-lg" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+        <h4 class="modal-title" id="myModalLabel">Compras Registradas</h4>
+      </div>
+      <div class="modal-body table-responsive" style="height: 400px;">
+    		<table class="table">
+    			<thead>
+    				<th>Producto</th>
+	  				<th>Urgencia</th>
+	  				<th>cliente</th>
+	  				<th>Pedido por</th>
+	  				<th>Estado</th>
+	  			
+    			</thead>
+    			<tbody *ngFor="let compra of allcompras">
+    				<tr>
+    					<td>
+    						<span class="{{compra.llegoprodu}}">{{compra.producto}}</span>
+    					</td>
+    					<td>
+    						<span class="{{compra.llegoprodu}}">{{compra.urgencia}}</span>
+    					</td>
+    					<td>
+    						<span class="{{compra.llegoprodu}}">{{compra.pqcliente}}</span>
+    					</td>
+    					<td>
+    						<span class="{{compra.llegoprodu}}">{{compra.pedidopor}}  </span>
+    					</td>
+    					<td>
+    						<button  class="btn btn-primary btn-xs {{compra.llegoprodu}}" type="button" id="{{compra._id}}" (click)="checkCompra(compra._id,compra.llegoprodu)">Listo</button>	
+    						
+    					</td>
+    				</tr>
+    			</tbody>
+    			
+  				
+
+			</table>
+      </div>
+   
+    </div>
+  </div>

@@ -1,0 +1,61 @@
+<div id="app-tiempo-traslado" class="container">
+  <div class="col-sm-10 col-sm-offset-1">
+    <div class="col-sm-12 text-center">
+      <h2>
+        Tiempos de Traslado
+      </h2>
+      <hr>
+    </div>
+
+    <div id="tiempo-traslado" class="col-sm-12">
+      <div>
+        <form [formGroup]="form" (keydown.enter)="addItem()" class="create-item-form" autocomplete="off">
+          <div class="form-group">
+            <label for="item">Descripcion</label>
+            <input type="text" class="form-control" id="item" formControlName="nombre" placeholder="Descripcion">
+            <!-- <p *ngIf="form.controls.nombre.touched && form.controls.nombre.errors?.required" class="form-error">Nombre es requerido</p> -->
+          </div>
+          <div class="form-group">
+            <label for="tiempoDisenio">Tiempo de Traslado</label>
+            <input type="text" class="form-control" id="tiempoTraslado" formControlName="valor"
+              placeholder="Tiempo de Traslado">
+            <!-- <p *ngIf="form.controls.tiempoDisenio.touched && form.controls.tiempoDisenio.errors?.required" class="form-error">Tiempo de Diseño es requerido</p> -->
+          </div>
+        </form>
+        <div class="form-submit-container col-md-6">
+          <button type="button" (click)="addItem()" class="btn btn-primary" [disabled]="!form.valid">Agregar</button>
+        </div>
+      </div>
+      <br>
+      <table class="table table-hover">
+        <thead>
+          <th>#</th>
+          <th>Descripcion</th>
+          <th>Tiempo Traslado</th>
+          <th></th>
+        </thead>
+
+        <tbody>
+          <ng-container *ngIf="(items.length > 0); else emptyItems">
+            <tr *ngFor="let item of items; let i = index">
+              <td>{{ i+1 }}</td>
+              <td>{{ item.nombre }}</td>
+              <td>{{ item.valor }}</td>
+              <td>
+                <button class="btn btn-sm btn-danger" (click)="deleteItem(i)">
+                  <span class="glyphicon glyphicon-trash"></span>
+                </button>
+              </td>
+            </tr>
+          </ng-container>
+
+          <ng-template #emptyItems>
+            <tr>
+              <td class="text-center" colspan="12"><strong>No posee ningun elemento.</strong></td>
+            </tr>
+          </ng-template>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>

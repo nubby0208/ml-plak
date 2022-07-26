@@ -1,0 +1,13 @@
+<!-- Modal window -->
+<div class="modal fade" id="myModalSelect" role="dialog">
+  <div class="modal-dialog">
+  
+    <!-- Modal content-->
+    <div class="modal-body">
+      <div class="list-group">
+        <a *ngFor="let item of items" (click)="selectedElement(item)" class="list-group-item list-group-item-action">{{ item }}</a>
+      </div>
+    </div>
+    
+  </div>
+</div>

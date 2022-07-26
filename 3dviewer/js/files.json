@@ -1,0 +1,27 @@
+{
+  "textures":
+  [
+    {
+      "name" : "Fresno Negro Esc MDF",
+      "file" : "fresno_negro.jpg"
+    },
+    {
+      "name" : "nebraska",
+      "file" : "nebraska.jpg"
+    },
+    {
+      "name" : "siberia",
+      "file" : "siberia.jpg"
+    }
+  ],
+  "room_objects" : [
+    {
+      "name" : "simple_door",
+      "filename" : "basic_door.obj"
+    },
+    {
+      "name" : "basic_window",
+      "filename" : "basic_window.obj"
+    }
+  ]
+}

@@ -1,0 +1,92 @@
+<div id="app-respaldo-list" class="container">
+	<div class="col-sm-10 col-sm-offset-1">
+		<div class="col-sm-12 text-center">
+			<h2>
+				Listado de respaldos
+			</h2>
+			<hr>
+		</div>
+
+		<div id="respaldo-listado" class="col-sm-12">
+      <!--
+			<div class="form-horizontal">
+        <div class="row">
+          <div class="col-sm-4 form-group">
+            <label class="control-label col-sm-4">Usuario: </label>
+            <div class="col-sm-8">
+              <select class="form-control" name="usuario" [(ngModel)]="form.usuario_id">
+                <option *ngFor="let usuario of usuarios" [value]="usuario.id">{{ usuario.usuario }}</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="col-sm-6 form-group">
+            <label class="control-label col-sm-4"><span>Rango fecha</span></label>
+            <div class="col-sm-8">
+              <input type="text" class="form-control" daterangepicker name="fecha_fin"
+              (selected)="selectedDate($event, daterange)"
+              (applyDaterangepicker)="calendarApplied($event)"
+              >
+            </div>
+          </div>
+
+          <div class="col-sm-2 form-group">
+            <button class="btn btn-sm btn-success" (click)="reloadRegistros()">
+              <span class="glyphicon glyphicon-ok"></span>
+            </button>
+
+            <button class="btn btn-sm btn-default" (click)="resetForm()">
+              <span class="glyphicon glyphicon-refresh"></span>
+            </button>
+          </div>
+        </div>
+
+        <div class="row">
+          <div class="col-sm-4 form-group">
+            <label class="control-label col-sm-4"><span>Pieza: </span></label>
+            <div class="col-sm-8">
+              <input
+                class="form-control" type="text"
+                name="search" [(ngModel)]="searchTerm"
+                (ngModelChange)="searchRegistros()"
+              >
+            </div>
+          </div>
+          <div class="col-sm-2">
+            <button class="btn btn-sm btn-success" (click)="searchRegistros()">
+              <span class="glyphicon glyphicon-search"></span>
+            </button>
+          </div>
+        </div>
+      </div>
+      <br>
+      -->
+			<table class="table table-hover">
+				<thead>
+          <tr>
+            <th>#</th>
+            <th>Fecha</th>
+            <th>Base de datos</th>
+            <th>Documentos</th>
+          </tr>
+				</thead>
+				<tbody>
+					<ng-container *ngIf="(respaldos.length > 0); else emptyRespaldos">
+						<tr *ngFor="let respaldo of respaldos; let i = index">
+							<td>{{ i+1 }}</td>
+							<td>{{ respaldo.date }}</td>
+							<td><a class="btn btn-sm btn-primary" href="{{ getUrl(respaldo.name) }}">Descargar</a></td>
+							<td><a class="btn btn-sm btn-danger" href="{{ getUrl(respaldo.name, 'storage') }}">Descargar</a></td>
+						</tr>
+					</ng-container>
+
+					<ng-template #emptyRespaldos>
+						<tr>
+							<td class="text-center" colspan="4"><strong>No posee respaldos realizados</strong></td>
+						</tr>
+					</ng-template>
+				</tbody>
+			</table>
+		</div>
+	</div>
+</div>

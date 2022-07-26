@@ -1,0 +1,5 @@
+/Users/macbookpro/.nvm/versions/node/v6.9.1/bin/tsserver -> /Users/macbookpro/.nvm/versions/node/v6.9.1/lib/node_modules/typescript/bin/tsserver
+/Users/macbookpro/.nvm/versions/node/v6.9.1/bin/tsc -> /Users/macbookpro/.nvm/versions/node/v6.9.1/lib/node_modules/typescript/bin/tsc
+/Users/macbookpro/.nvm/versions/node/v6.9.1/lib
+└── typescript@2.9.2 
+

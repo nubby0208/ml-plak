@@ -1,0 +1,254 @@
+#form-container {
+  padding: 5px 0;
+}
+
+textarea{
+	resize: none;
+}
+
+.star{
+	font-size: 2.0rem !important;
+	color: #b0c4de;
+}
+
+.table-total {
+	font-weight: 600;
+}
+
+.detalle-grid {
+	display:flex;
+}
+
+.detalle-grid .labels{
+	/* width: 250px; */
+}
+
+#modal-detalle-pago h4 {
+	margin-top: 25px;
+}
+
+.detalle-grid .values {
+	font-weight: 600;
+}
+
+.project-options {
+	display: flex;
+    align-items: center;
+}
+
+.optimizar-todo-container {
+	position: relative;
+    right: 45px;
+}
+
+.filled {
+	color: orange;
+  }
+
+.error-font {
+	color: red;
+	font-weight: bold;
+}
+
+.optimalon-error {
+	color: red;
+}
+
+#navbar-menu {
+  margin-left: 0px;
+  margin-right: 0px;
+}
+
+.space-around{
+	display: flex;
+    justify-content: space-around;
+}
+
+.col-sm-12 {
+	margin-bottom: 7px;
+	margin-top: 7px;
+}
+
+.cancel-panel {
+     cursor: pointer;
+  }
+
+.radio-inline {
+	font-weight: bold;
+}
+
+::ng-deep .door-sketch .bisagra {
+	width: 7px;
+	height: 7px;
+	background-color: #8BC34A;
+}
+
+::ng-deep .door-sketch .bisagra-position {
+	position: relative;
+	display: inline-block;
+	left: 8px;
+	bottom: 5px;
+}
+
+::ng-deep .door-sketch [class="Izquierda/Derecha"] .bisagra-position {
+	left: 10px;
+	bottom: 5px;
+}
+
+::ng-deep .door-sketch .Inferior .bisagra-position {
+	transform: rotate(310deg);
+	left: -5px;
+	bottom: 24px;
+}
+
+::ng-deep .door-sketch .Derecha .bisagra-position {
+	left: 8px;
+	bottom: 5px;
+}
+
+::ng-deep .door-sketch .Izquierda .bisagra-position {
+	right: 36px;
+	bottom: 5px;
+}
+
+::ng-deep .door-sketch .Superior .bisagra-position {
+	transform: rotate(310deg);
+	left: -25px;
+	top: 15px;
+}
+
+::ng-deep .door-sketch {
+	width: 98px;
+	height: 98px;
+	border: 1px solid black;
+	margin: 0 auto;
+	margin-top: 10px;
+	display: flex;
+	justify-content: center;
+}
+.nav-tabs li.disabled a { pointer-events: none; } 
+@media all and (max-width: 500px) {
+ table.one-column {
+	 width: 100%;
+ }
+
+ table.one-column td, table.one-column th {
+	 display:block;
+	 width:100%;
+ }
+
+ table.one-column tr {
+	 display:block;
+ }
+}
+
+.no-padding {
+	padding-left: 0px;
+	padding-right: 0px;
+}
+
+.btn-edit-info {
+	display: block-inline;
+	float: right;
+}
+
+.loading-area {
+	position: absolute;
+	height: 100%;
+	width: 100%;
+	z-index: 9;
+	background: rgba(0,0,0,0.3);
+}
+
+.loading-area div {
+	position: absolute;
+	left: 50%;
+	top: 10%;
+	margin-top: 9%;
+}
+
+.loading-area div img {
+	position: relative;
+	left: -50%;
+}
+
+.table-meta {
+	width: 500px;	
+}
+
+.materiales-table {
+	min-width: 750px;
+}
+
+.materiales-table th {
+	border: 1px solid #ccc;
+    height: 40px;
+    text-align: center;
+}
+
+.materiales-table th.desperdicio {
+	width: 90px;
+}
+.waste-note {
+	position: relative;
+    bottom: 20px;
+}
+.muted {
+	color: #9a9a9a;
+	font-size: 12px;
+}
+.bold {
+	font-weight: bold;
+}
+
+.row-label {
+	width: 200px;
+	text-align: center;
+}
+
+.table-title {
+	text-transform: capitalize;
+	text-align: center;
+	font-size: 18px;
+}
+
+.table-meta.table-hover>tbody>tr.table-title-row:hover {
+	background-color: transparent;
+}
+
+.toggle-meta-label {
+	font-weight: initial;
+	cursor: pointer;
+}
+
+.table-card-stock {
+	margin: 5px;
+}
+
+.cantidad-row, .estado-row {
+	width: 200px;
+}
+
+.nombre-row {
+	width: 350px;
+}
+
+.cantidad-manual-row {
+	width: 60px;
+}
+
+@media (max-width: 750px) {
+	.materiales-table {
+		min-width: initial;
+		width: initial;
+		margin: 0 auto;
+	}
+
+	.estado-row {
+		min-width: 135px;
+	}
+
+	.hide-sm {
+		display: none;
+	}
+}

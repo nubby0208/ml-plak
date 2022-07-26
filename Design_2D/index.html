@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>ML-Plak-CAD</title>
+    <link href="css/all.css" rel="stylesheet"/>
+    <link rel="stylesheet" href="css/bootstrap.min.css">
+    <link rel="stylesheet" href="css/flexbox.min.css">
+    <link rel="stylesheet" href="css/main.css">
+    
+</head>
+<body>
+    <!--h2 class="title">Centro de Diseno CAD 2D ML-PLAK</h2>
+    <div id ="naming-box">
+        <div class="naming-items">
+            <label for="name">Dale Nombre a este dibujo!!</label>
+            <input type="text" id ="name">
+            <button id="name_button" class="btn btn-primary">Guardar Nombre</button>
+        </div>
+    </div-->
+    <div class="canvas-container">
+        <canvas id="canvas" resize></canvas>
+        <div>
+            <div id="Lineas"></div>
+        </div>
+    </div>
+    <div class="buttons-container">
+        <div>
+            <input class="form-control w-input" type="text" placeholder="length :"  name="length" id="length" autofocus >
+            <button class="buttons btn btn-danger" id="Group">Nuevo Grupo</button>  
+            <button class='Design buttons btn btn-danger' id='Design'><i class="far fa-edit"></i></button>
+            <input class="form-control w-input" type="text" placeholder="Medida :"  name="Mesure" id="Mesure">
+            <button class="buttons btn btn-primary" id="Get_SVG"><i class="far fa-save"></i></button>
+            <!--button class="buttons btn btn-primary" id="Send_Data">Guardar Dibujo</button-->
+            <!--button class="buttons btn btn-primary" id="Obtain_Data">Mostrar Dibujos</button-->
+            <!--div><button class="buttons btn btn-primary" id="Editar_Dibujo">Editar y Guardar Dibujo</button></div-->
+            <button class="buttons btn btn-primary" id="clear_canvas">Limpiar lienzo</button>
+            <button class="buttons btn btn-primary" id="Undo"><i class="fas fa-undo"></i></button>
+            <button class="buttons btn btn-danger" id="New-design">Nuevo Dibujo</button>  
+        </div>
+        <div class="buttons btn btn-primary">
+            <input type='checkbox' class='DegreeAsistant' name='DegreeAsistant' id='DegreeAsistant' checked>
+            <label for="#DegreeAsistant">Angulos fijos</label>
+        </div>
+        <div class="buttons btn btn-primary">
+            <input type='checkbox' name='UnionAsistant' id='UnionAsistant' checked>
+            <label for="#UnionAsistant">Union automatica</label>
+        </div>
+            <input class="form-control w-input" type="text" placeholder="Texto" class='InsertTextctn' name='InsertTextctn' id='InsertTextctn' checked>
+            <select class="form-control w-input" name="TxtFont" id="TxtFont">
+                <option value="10">10</option>
+                <option value="14">14</option>
+                <option value="16">16</option>
+                <option value="18">18</option>
+                <option value="20">20</option>
+                <option value="30">30</option>
+                <option value="60">60</option>
+                <option value="120">120</option>
+                <option value="160">160</option>
+                <option value="180">180</option>
+                <option value="200">200</option>
+            </select>
+            <div>
+                <button class="buttons btn btn-primary" id="InsertTextBtn">Insertar texto</label>
+                </div>
+        <div id="group_container">
+        </div>
+        <div id="results"></div>
+    </div> 
+          <div class="modal-content menu_modal" id="line_menu">
+                    <i class="far fa-times-circle close_line_menu" id="HideMenu" alt="close menu"></i>
+                    <button type="button" class="btn btn-secondary"  id='MoveAsistant'><i class="fas fa-hand-paper" alt="Move Lines"></i></button>
+                    <button type="button" class="btn btn-secondary" id="clone_path"><i class="far fa-copy" alt="Clone Line"></i></button>
+                    <button type="button" class="btn btn-secondary" id="Guide"><i class="fas fa-grip-lines-vertical" alt="Make Guide"></i></button>
+                    <button type="button" class="btn btn-secondary" id="Eraser"><i class="fas fa-eraser" alt="Erase Line"></i></button>
+                <div class="extraOptions" id="extraOptions">
+                    <input class="form-control w-input" type="text" placeholder="Distancia :"  name="CopyDistance" id="CopyDistance">
+                    <button type="button" class="btn btn-secondary"  id='PlusSide'><i class="fas fa-arrow-left"></i></button>
+                    <button type="button" class="btn btn-secondary" id="MinusSide"><i class="fas fa-arrow-right"></i></button>
+                </div>
+                <div class="MovementOptions" id="MovementOptions">
+                    <button type="button" class="btn btn-secondary"  id='MoveOnX'>X</button>
+                    <button type="button" class="btn btn-secondary" id="MoveOnY">Y</button>
+                </div>
+          </div>
+</body>
+<script type="text/javascript" src="js/jquery.min.js"></script>
+<script type="text/javascript" src="js/paper-full.js"></script>
+<script type="text/paperscript" src="js/app.js" canvas="canvas"></script>
+</html>

@@ -1,0 +1,94 @@
+<div id="app-usuario-form" class="container-fluid">
+	<div id="" class="col-sm-12">
+		<ng-container *ngIf="messages.length > 0">
+			<div *ngFor="let message of messages" class="alert alert-{{ message.type }}">
+				<button *ngIf="!message.keep" type="button" class="close" data-dismiss="alert" aria-label="Close">
+					<span aria-hidden="true">&times;</span>
+				</button>
+				{{ message.message }}
+			</div>
+		</ng-container>
+		
+		<form id="form-usuario" class="form-horizontal" action="#!" method="post">
+			<div class="row" style="margin-bottom:20px;">
+				<div class="col-md-3 text-capitalize"><strong>Día</strong></div>
+				<div class="col-md-3"><strong>Habilitado</strong></div>
+				<div class="col-md-3"><strong>Hora entrada</strong></div>
+				<div class="col-md-3"><strong>Hora salida</strong></div>
+			</div>
+			<div class="row" style="margin-bottom:10px;">
+				<div class="col-md-3 text-capitalize">Lunes</div>
+				<div class="col-md-3">
+					<input id="habilitado_lunes" name="habilitado_lunes" type="checkbox" [(ngModel)]="usuario.horario.habilitado_lunes">
+				</div>
+				<div class="col-md-3">
+					<input id="hora_inicio_lunes" class="form-control" name="hora_inicio_lunes" type="text" [(ngModel)]="usuario.horario.hora_inicio_lunes">
+				</div>
+				<div class="col-md-3">
+					<input id="hora_fin_lunes" class="form-control" name="hora_fin_lunes" type="text" [(ngModel)]="usuario.horario.hora_fin_lunes">
+				</div>
+			</div>
+			<div class="row" style="margin-bottom:10px;">
+				<div class="col-md-3 text-capitalize">martes</div>
+				<div class="col-md-3">
+					<input id="habilitado_martes" name="habilitado_martes" type="checkbox" [(ngModel)]="usuario.horario.habilitado_martes">
+				</div>
+				<div class="col-md-3">
+					<input id="hora_inicio_martes" class="form-control" name="hora_inicio_martes" type="text" [(ngModel)]="usuario.horario.hora_inicio_martes">
+				</div>
+				<div class="col-md-3">
+					<input id="hora_fin_martes" class="form-control" name="hora_fin_martes" type="text" [(ngModel)]="usuario.horario.hora_fin_martes">
+				</div>
+			</div>
+			<div class="row" style="margin-bottom:10px;">
+				<div class="col-md-3 text-capitalize">miercoles</div>
+				<div class="col-md-3">
+					<input id="habilitado_miercoles" name="habilitado_miercoles" type="checkbox" [(ngModel)]="usuario.horario.habilitado_miercoles">
+				</div>
+				<div class="col-md-3">
+					<input id="hora_inicio_miercoles" class="form-control" name="hora_inicio_miercoles" type="text" [(ngModel)]="usuario.horario.hora_inicio_miercoles">
+				</div>
+				<div class="col-md-3">
+					<input id="hora_fin_miercoles" class="form-control" name="hora_fin_miercoles" type="text" [(ngModel)]="usuario.horario.hora_fin_miercoles">
+				</div>
+			</div>
+			<div class="row" style="margin-bottom:10px;">
+				<div class="col-md-3 text-capitalize">jueves</div>
+				<div class="col-md-3">
+					<input id="habilitado_jueves" name="habilitado_jueves" type="checkbox" [(ngModel)]="usuario.horario.habilitado_jueves">
+				</div>
+				<div class="col-md-3">
+					<input id="hora_inicio_jueves" class="form-control" name="hora_inicio_jueves" type="text" [(ngModel)]="usuario.horario.hora_inicio_jueves">
+				</div>
+				<div class="col-md-3">
+					<input id="hora_fin_jueves" class="form-control" name="hora_fin_jueves" type="text" [(ngModel)]="usuario.horario.hora_fin_jueves">
+				</div>
+			</div>
+			<div class="row" style="margin-bottom:10px;">
+				<div class="col-md-3 text-capitalize">viernes</div>
+				<div class="col-md-3">
+					<input id="habilitado_viernes" name="habilitado_viernes" type="checkbox" [(ngModel)]="usuario.horario.habilitado_viernes">
+				</div>
+				<div class="col-md-3">
+					<input id="hora_inicio_viernes" class="form-control" name="hora_inicio_viernes" type="text" [(ngModel)]="usuario.horario.hora_inicio_viernes">
+				</div>
+				<div class="col-md-3">
+					<input id="hora_fin_viernes" class="form-control" name="hora_fin_viernes" type="text" [(ngModel)]="usuario.horario.hora_fin_viernes">
+				</div>
+			</div>
+			<div class="row" style="margin-bottom:10px;">
+				<div class="col-md-3 text-capitalize">sabado</div>
+				<div class="col-md-3">
+					<input id="habilitado_sabado" name="habilitado_sabado" type="checkbox" [(ngModel)]="usuario.horario.habilitado_sabado">
+				</div>
+				<div class="col-md-3">
+					<input id="hora_inicio_sabado" class="form-control" name="hora_inicio_sabado" type="text" [(ngModel)]="usuario.horario.hora_inicio_sabado">
+				</div>
+				<div class="col-md-3">
+					<input id="hora_fin_sabado" class="form-control" name="hora_fin_sabado" type="text" [(ngModel)]="usuario.horario.hora_fin_sabado">
+				</div>
+			</div>
+		</form>
+	</div>
+
+</div>

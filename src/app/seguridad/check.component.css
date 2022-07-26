@@ -1,0 +1,8 @@
+.jumbotron {
+	border: 2px solid #e7e7e7;
+	background-color: #f8f8f8;
+}
+
+.container .jumbotron, .container-fluid .jumbotron {
+	border-radius: 1px;
+}

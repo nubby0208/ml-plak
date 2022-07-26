@@ -1,0 +1,140 @@
+<div id="app-material-form" class="container-fluid">
+	<div id="" class="col-sm-12">
+		<ng-container *ngIf="messages.length > 0">
+			<div *ngFor="let message of messages" class="alert alert-{{ message.type }}">
+				<button *ngIf="!message.keep" type="button" class="close" data-dismiss="alert" aria-label="Close">
+					<span aria-hidden="true">&times;</span>
+				</button>
+				{{ message.message }}
+			</div>
+		</ng-container>
+
+		<form id="form-material" class="form-horizontal" action="#!" method="post">
+
+			<div class="form-group">
+				<label class="control-label col-sm-4" for="tipo_materiales">Tipo Material</label>
+				<div class="col-sm-8">
+					<select (change)="onChangeTipoMaterial($event)" id="tipo_materiales" class="form-control" name="tipo_materiales" [(ngModel)]="material.tipo_material_id">
+						<option *ngFor="let tipo_material of tipo_materiales" [value]=tipo_material.id>{{ tipo_material.tipo }}</option>
+					</select>
+				</div>
+			</div>
+
+      <ng-container *ngIf="material.tipo_material_id">
+				<div class="form-group" *ngIf="caracter !== 'P'">
+					<label class="control-label col-sm-4" for="nombre">Nombre</label>
+					<div class="col-sm-8">
+						<input id="nombre" class="form-control" name="nombre" type="text" [(ngModel)]="material.nombre">
+					</div>
+				</div>
+
+				<div class="form-group">
+					<label class="control-label col-sm-4" for="material">Material</label>
+					<div class="col-sm-8">
+						<input id="material" class="form-control" name="material" type="text" [(ngModel)]="material.material">
+					</div>
+				</div>
+
+				<div class="form-group" *ngIf="caracter == 'H' || caracter == 'M'">
+					<label class="control-label col-sm-4" for="descuento_alto">Descuento Alto</label>
+					<div class="col-sm-8">
+						<input id="descuento_alto" class="form-control" name="descuento_alto" type="text" [(ngModel)]="material.descuento_alto">
+					</div>
+				</div>
+
+				<div class="form-group" *ngIf="caracter == 'H' || caracter == 'M'">
+					<label class="control-label col-sm-4" for="descuento_ancho">Descuento Ancho</label>
+					<div class="col-sm-8">
+						<input id="descuento_ancho" class="form-control" name="descuento_ancho" type="text" [(ngModel)]="material.descuento_ancho">
+					</div>
+				</div>
+				
+				<div class="form-group" *ngIf="caracter !== 'P'">
+					<label class="control-label col-sm-4" for="alto">Alto</label>
+					<div class="col-sm-8">
+						<input id="alto" class="form-control" name="alto" type="text" [(ngModel)]="material.alto">
+					</div>
+				</div>
+	      
+	      <div class="form-group" *ngIf="caracter == 'P'">
+					<label class="control-label col-sm-4" for="veta">Veta</label>
+					<div class="col-sm-8">
+						<select id="veta" class="form-control" name="veta" [(ngModel)]="material.veta">
+							<option *ngFor="let estado of estados" [value]="estado.value">{{ estado.estado }}</option>
+						</select>
+					</div>
+				</div>
+
+				<div class="form-group" *ngIf="caracter !== 'T'">
+					<label *ngIf="caracter == 'P' || caracter == ''; else other_label" class="control-label col-sm-4" for="ancho_veta">
+					Ancho veta</label>
+					<ng-template #other_label>
+						<label *ngIf="caracter && caracter == 'H' || caracter == 'M'" class="control-label col-sm-4" for="ancho_veta">
+					Ancho</label>
+					</ng-template>
+					<div class="col-sm-8">
+						<input id="ancho_veta" class="form-control" name="ancho_veta" type="number" [(ngModel)]="material.ancho_veta">
+					</div>
+				</div>
+
+				<div class="form-group" *ngIf="caracter == 'P'">
+					<label class="control-label col-sm-4" for="largo_veta">Largo veta</label>
+					<div class="col-sm-8">
+						<input id="largo_veta" class="form-control" name="largo_veta" type="number" [(ngModel)]="material.largo_veta">
+					</div>
+				</div>
+
+				<div class="form-group">
+					<label class="control-label col-sm-4" for="espesor">Espesor</label>
+					<div class="col-sm-8">
+						<input id="espesor" class="form-control" name="espesor" type="number" [(ngModel)]="material.espesor">
+					</div>
+				</div>
+
+				<div class="form-group">
+					<label class="control-label col-sm-4" for="textura">Textura</label>
+					<div class="col-sm-8">
+						<input [(ngModel)]="material.link_textura1" class="form-control" name="textura" type="file" (change)="onChangeTextura($event)">
+						<img  *ngIf="preview" id="preview" src="{{preview}}" width="100" height="100">
+					</div>
+				</div>
+
+				<div class="form-group">
+					<label class="control-label col-sm-4" for="link_textura2">Color HTML</label>
+					<div class="col-sm-8">
+						<input  [(ngModel)]="material.link_textura2"  id="link_textura2" value="{{material.link_textura2}}" class="form-control" name="link_textura2" type="color">
+					</div>
+				</div>
+
+				<div class="form-group">
+					<label class="control-label col-sm-4" for="precio_mt2">Precio mt<sup>2</sup></label>
+					<div class="col-sm-8">
+						<input id="precio_mt2" class="form-control" name="precio_mt2" type="number" [(ngModel)]="material.precio_mt2">
+					</div>
+				</div>
+
+				<div class="form-group" *ngIf="caracter == 'P'">
+					<label class="control-label col-sm-4" for="precio_placa">Precio placa</label>
+					<div class="col-sm-8">
+						<input id="precio_placa" class="form-control" name="precio_placa" type="number" [(ngModel)]="material.precio_placa">
+					</div>
+				</div>
+
+				<div class="form-group">
+					<label class="control-label col-sm-4" for="extra">Extra</label>
+					<div class="col-sm-8">
+						<input id="extra" class="form-control" name="extra" type="text" [(ngModel)]="material.extra">
+					</div>
+				</div>
+				<div class="form-group">
+					<label class="control-label col-sm-4" for="default">Default</label>
+					<div class="col-sm-8" style="padding-top:6px;">
+						<input id="default" name="default" type="checkbox" [(ngModel)]="material.default">
+					</div>
+				</div>
+			</ng-container>	
+
+		</form>
+	</div>
+
+</div>

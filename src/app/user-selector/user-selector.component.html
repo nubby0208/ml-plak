@@ -1,0 +1,21 @@
+<!-- Modal window -->
+<div class="modal fade" id="userModalSelect" role="dialog">
+  <div class="modal-dialog">
+
+    <div class="panel panel-default">
+
+      <div class="panel-header text-center">
+        <h2>Selecciona un Usuario</h2>
+      </div>
+    
+      <!-- Modal content-->
+      <div class="panel-body">
+        <div class="list-group">
+          <a *ngFor="let item of items" (click)="selectedElement(item)" class="list-group-item list-group-item-action">{{ item.usuario }}</a>
+        </div>
+      </div>
+
+    </div>
+    
+  </div>
+</div>

@@ -1,0 +1,68 @@
+/* You can add global styles to this file, and also import other style files */
+
+#myModalSelect {
+    overflow: scroll;
+}
+
+.list-group-item {
+    min-height: 35px;
+}
+
+.modal-danger {
+    background-color: #d9534f;
+}
+
+.table-nowrap {
+    white-space: nowrap !important;
+}
+
+.table-nowrap input {
+    width: 100px !important;
+}
+
+
+.userdata {
+    padding: 5px 0;
+}
+
+.ui-select-container {
+    display: inline-block;
+}
+
+.ui-select-toggle {
+    padding-right: 25px !important;
+}
+
+.ngx-datatable .datatable-body .datatable-row-detail{
+    white-space:normal;
+  }
+  
+  .datatable-row-detail{
+    white-space: normal;
+  }
+  
+  .ngx-datatable .datatable-body-cell{
+      overflow: auto !important;
+      white-space: normal !important;
+  }
+
+.ui-select-choices {
+    width: 200% !important;
+    max-width: 400px !important;
+}
+
+.colorbox { 
+    display:inline-block; 
+    height:14px; 
+    width:14px;
+    margin-right:4px;
+    border:1px solid #000;
+}
+
+.unfont-size {
+	font-size: unset !important;
+}
+
+.pac-container {
+    z-index: 10000 !important;
+}
